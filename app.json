@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "watchies",
+    "slug": "watchies",
+    "owner": "aelxnadre72",
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "css"
+      ]
+    },
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.aelxnadre72.watchies"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2aa5cf67-0798-4661-b7fe-91c28f90935c"
+      }
+    }
+  }
+}

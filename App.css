@@ -1,0 +1,11 @@
+.container {
+    flex: 1;
+    background-Color: #fff;
+    align-Items: center;
+    justify-Content: center;
+    color: red;
+}
+
+.text {
+    color: red;
+}
