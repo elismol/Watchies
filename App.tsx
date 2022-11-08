@@ -1,19 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { Image, View, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import style from './App.css';
-import { getUser } from './src/api/movieAPI';
-import { IUserType } from './src/types/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginPage from './src/screens/Login';
 import Login from './src/screens/Login';
-//import Movies from './src/screens/movies';
-//import userProfile from './src/screens/userProfile';
 import { RecoilRoot } from 'recoil';
 import Movies from './src/screens/Movies';
+import Favorites from './src/screens/Favorites';
+import { RootStackParamList } from './src/types/types';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export default function App() {
   /*
@@ -38,18 +35,67 @@ export default function App() {
     </View>
   );*/
 
-//<Stack.Screen name = "Movies" component={Movies} />
-//<Stack.Screen name = "UserProfile" component={userProfile} />
   return (
-    <>
+    <SafeAreaProvider>
     <RecoilRoot>
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false, animation: 'fade', animationDuration: 0.1}} initialRouteName="Login">
-        <Stack.Screen name = "Login" component={Login} />
-        <Stack.Screen name = "Movies" component={Movies} />
-      </Stack.Navigator>
+      <Tab.Navigator screenOptions={{headerShown: false}} initialRouteName="Login">
+        <Tab.Screen options={{
+          unmountOnBlur: true, 
+          tabBarIcon: () => {
+            return (
+              <View>
+                <Image
+                  source={require('./src/resources/play.png')}
+                  resizeMode="contain"
+                  style={{ width: 25 }}
+                />
+              </View>
+            );
+          }
+        }} 
+        name = "Movies" 
+        component={Movies} />
+        <Tab.Screen 
+          options={{
+            unmountOnBlur: true, 
+            tabBarIcon: () => {
+              return (
+                <View>
+                  <Image
+                    source={require('./src/resources/star.png')}
+                    resizeMode="contain"
+                    style={{ width: 23 }}
+                  />
+                </View>
+              );
+            }
+          }} 
+          name = "Favorites" 
+          component={Favorites} />
+        <Tab.Screen 
+          options={{
+            tabBarStyle: { display: "none" }, 
+            unmountOnBlur: true, 
+            title: "Sign Out",
+            tabBarIcon: () => {
+              return (
+                <View>
+                  <Image
+                    source={require('./src/resources/signOut.png')}
+                    resizeMode="contain"
+                    style={{ width: 20 }}
+                  />
+                </View>
+              );
+            }
+          }}
+          name="Login" 
+          component={Login} 
+        />
+      </Tab.Navigator>
     </NavigationContainer>
     </RecoilRoot>
-    </>
+    </SafeAreaProvider>
   );
 }

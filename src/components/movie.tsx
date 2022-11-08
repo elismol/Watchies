@@ -19,7 +19,7 @@ const Movie = (props: IMovieType) => {
     return (
         <>
             {(poster === require("../resources/loadingImage.png")) ?
-                <Image source={require("../resources/loadingImage.png")} style={{width: '10%', height: '10%'}}/> : <Image source={poster} onError={imageError} style={{width: '5%', height: '5%'}}/>
+                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={{width: 10, height: 10}}/> : <Image source={poster} onError={imageError} style={{width: '5%', height: '5%'}}/>
             }
             <Text>{props.title}</Text>
             <Text>{props.year}</Text>

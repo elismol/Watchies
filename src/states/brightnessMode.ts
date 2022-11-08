@@ -7,5 +7,6 @@ export const brightnessMode = atom({
     backgroundColor: "black",
     fontColor: "white",
     navbarColor: "#151515",
+    enabled: true,
   },
 });
