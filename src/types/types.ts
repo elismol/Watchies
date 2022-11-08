@@ -20,3 +20,9 @@ export interface IfetchType {
     searchWord: string
     orderBy: string
 }
+
+export type RootStackParamList = {
+    Login: any;
+    Movies: undefined;
+    Favorites: undefined;
+  };
