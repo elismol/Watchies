@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, ScrollView, Text , TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Button, Modal, Pressable, ScrollView, Text , TextInput, TouchableOpacity, View } from 'react-native';
 import { getMovie, getUser } from '../api/movieAPI';
 import { IMovieType } from '../types/types';
-import Movie from '../components/movie';
-import MovieInfo from '../components/movieInfo';
+import Movie from '../components/Movie';
+import MovieInfo from '../components/MovieInfo';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -16,6 +16,7 @@ import AccountInfo from '../components/AccountInfo';
 import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
 import ColorModeButton from '../components/ColorModeButton';
+import { brightnessMode } from '../states/brightnessMode';
 
 type FavoritesProps = NativeStackScreenProps<RootStackParamList, 'Favorites'>;
 
@@ -38,6 +39,7 @@ const Favorites = ({navigation}: FavoritesProps) => {
     const [open, setOpen] = useState(false);
     const [modalMovie, setModalMovie] = useState(initialMovieState);
     const [refresh, setRefresh] = useRecoilState(refreshed);
+    const [mode, setMode] = useRecoilState(brightnessMode);
     const [email, setEmail] = useState("");
     
     // handles opening and closing the dialog pop up
@@ -100,17 +102,40 @@ const Favorites = ({navigation}: FavoritesProps) => {
         <AccountInfo email={email}></AccountInfo>
         <ColorModeButton></ColorModeButton>
         <Text>My favorite movies</Text>
-        {!fetchingData ?
-        (
+        {(!fetchingData) ?
         <ScrollView>
             {favouriteMovies.map((movie:IMovieType) => 
-            <TouchableOpacity style={{height: 80}} key={movie.id} onPress={() => handleOpen(movie)}>
-                <Movie {...movie} />
-            </TouchableOpacity>
+                <Pressable
+                    style={({ pressed }) => [
+                        {
+                            opacity: pressed? mode.pressOpacity : 1,
+                            backgroundColor: mode.cardColor,
+                            height: 150,
+                        },
+                        
+                        //kan legge til style.button feks her i tillegg
+                    ]}
+                    key={movie.id} 
+                    onPress={() => handleOpen(movie)}
+                >
+                    <Movie {...movie} />
+                </Pressable>
             )}        
         </ScrollView>
+        :
+        (noData) ? 
+            <Text>You have no favourite movies!</Text> 
+            : 
+            <View style={{
+                    paddingVertical: 20,
+                    borderTopWidth: 1,
+                    borderColor: "#CED0CE",
+                }}>
+                <ActivityIndicator animating size="large"/>
+            </View>
+        }
 
-        ) : <Text>loading favourite movies...</Text>}
+        {noData && !fetchingData ? <Text>You have no favourite movies!</Text> : <></>}
 
         <View>
             <Modal
@@ -127,7 +152,6 @@ const Favorites = ({navigation}: FavoritesProps) => {
                     </View> 
                 </Modal>
         </View>
-            {noData && !fetchingData ? <Text>You have no favourite movies!</Text> : <></>}
 
         </SafeAreaView>
     );

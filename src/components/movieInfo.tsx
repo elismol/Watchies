@@ -14,7 +14,7 @@ const movieInfo = (props: IMovieType) => {
     const [favourites, setFavourites] = useState<string[]>([]);
 
     useEffect(()=> {
-        setPoster(props.posterlink); 
+        setPoster({uri : props.posterlink});
         fetchFavourites();
     }, []);
 
@@ -45,7 +45,9 @@ const movieInfo = (props: IMovieType) => {
         <>
         <View>
             {(poster === require("../resources/loadingImage.png")) ?
-                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={{width: 10, height: 10}}/> : <Image source={poster} onError={imageError} style={{width: '5%', height: '5%'}}/>
+                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={{width: 100, height: 100}}/> 
+                : 
+                <Image source={poster} onError={imageError} resizeMode="contain" style={{width: 100, height: 100}}/>
             }
             <Text>{ props.title }</Text>
             <Text>Release year: { props.year }</Text>

@@ -62,7 +62,7 @@ const filterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSor
 
     return (
         <View>
-            <View style={{width: '49%'}}>
+            <View style={{width: '49%', zIndex: 10}}>
                 <DropDownPicker
                     open={openFilter}
                     onOpen={onFilterSort}
@@ -74,7 +74,7 @@ const filterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSor
                 />
             </View>
 
-            <View style={{width: '49%'}}>
+            <View style={{width: '49%', zIndex: 9}}>
                 <DropDownPicker
                     open={openSort}
                     onOpen={onOpenSort}

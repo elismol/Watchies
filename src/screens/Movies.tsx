@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, StatusBar, Text , TextInput, TouchableOpacity, View,Modal, FlatList, ActivityIndicator } from 'react-native';
+import { Button, StatusBar, Text , TextInput, TouchableOpacity, View,Modal, FlatList, ActivityIndicator, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IfetchType, IMovieType } from '../types/types';
 import useFetch from '../hooks/useFetch';
-import Movie from '../components/movie';
-import MovieInfo from '../components/movieInfo';
-import FilterSort from '../components/filterSort';
+import Movie from '../components/Movie';
+import MovieInfo from '../components/MovieInfo';
+import FilterSort from '../components/FilterSort';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../types/types';
 import { useRecoilState } from 'recoil';
@@ -45,10 +45,23 @@ const Movies = ({navigation}: MoviesProps) => {
 
     const [modalMovie, setModalMovie] = useState(initialMovieState);
 
+    // initial IfetchType object
+    const querySearch: IfetchType = {
+        limit: limit,
+        filterWord: genreWord,
+        searchWord: searchWord,
+        orderBy: orderBy
+    }
+
+    const [query, setQuery] = useState<IfetchType>(querySearch);
+    const [page, setPage] = useState(0);
+    const { loading, list } = useFetch(query, page);
+    
+
     //Cheks if user is signed in. Navigates to login page if not. 
     useEffect(() => {
-        isActive();
-        getEmail();
+            isActive();
+            getEmail();
     },[]);
 
     const isActive = async () => {
@@ -68,18 +81,6 @@ const Movies = ({navigation}: MoviesProps) => {
             setEmail(previousEmail || "");
         }
     };
-
-    // initial IfetchType object
-    const querySearch: IfetchType = {
-        limit: limit,
-        filterWord: genreWord,
-        searchWord: searchWord,
-        orderBy: orderBy
-    }
-
-    const [query, setQuery] = useState<IfetchType>(querySearch);
-    const [page, setPage] = useState(0);
-    const { loading, list } = useFetch(query, page);
 
     //Fetches movies by query.
     const fetchMovies = (limit: number, filterWord: string, searchWord: string, orderBy: string) => {
@@ -115,7 +116,7 @@ const Movies = ({navigation}: MoviesProps) => {
     }
 
     const renderFooter = () => {
-        if (loading) {
+        if (!loading) {
             return (<Text>No more movies found.</Text>);
         }
         else {
@@ -130,6 +131,12 @@ const Movies = ({navigation}: MoviesProps) => {
             );
         }
     }    
+
+    const newPage = () => {
+        if(loading) {
+            setPage((prev: number) => ((prev/limit)+1)*limit);
+        }
+    }
 
     return (
         <>
@@ -156,14 +163,25 @@ const Movies = ({navigation}: MoviesProps) => {
             <FlatList
                 data={list}
                 keyExtractor={(movie: IMovieType) => movie.id}
-                onEndReached={() => setPage((prev: number) => ((prev/limit)+1)*limit)}
-                onEndReachedThreshold={1}
+                onEndReached={newPage}
+                onEndReachedThreshold={0.001}
+                initialNumToRender={limit}
                 ListFooterComponent={renderFooter}
-                renderItem={({item}) => (
-                    <TouchableOpacity style={{height: 80}} key={item.id} onPress={() => handleOpen(item)}>
+                renderItem={({item}) => (            
+                    <Pressable 
+                        style={({ pressed }) => [
+                            {
+                                opacity: pressed? mode.pressOpacity : 1,
+                                backgroundColor: mode.cardColor,
+                                height: 150,
+                            },
+                            //kan legge til style.button feks her i tillegg
+                        ]}
+                        key={item.id} 
+                        onPress={() => handleOpen(item)}
+                    >
                         <Movie {...item} />
-                    </TouchableOpacity>
-                )}
+                    </Pressable>)}
             />  
         </SafeAreaView>
 

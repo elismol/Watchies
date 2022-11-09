@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, StatusBar, Text, Image, TextInput, TouchableOpacity, View, Modal } from 'react-native';
+import React, { useEffect, useState, PureComponent } from "react";
+import { Text, Image} from 'react-native';
 import { IMovieType } from "../types/types";
 
 // display movies on homepage
@@ -19,7 +19,9 @@ const Movie = (props: IMovieType) => {
     return (
         <>
             {(poster === require("../resources/loadingImage.png")) ?
-                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={{width: 10, height: 10}}/> : <Image source={poster} onError={imageError} style={{width: '5%', height: '5%'}}/>
+                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={{width: 100, height: 100}}/> 
+                : 
+                <Image source={poster} onError={imageError} resizeMode="contain" style={{width: 100, height: 100}}/>
             }
             <Text>{props.title}</Text>
             <Text>{props.year}</Text>
@@ -28,4 +30,4 @@ const Movie = (props: IMovieType) => {
 }
 
 
-export default Movie;
+export default React.memo(Movie);

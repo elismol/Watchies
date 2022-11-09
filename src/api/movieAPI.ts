@@ -158,7 +158,7 @@ export async function getUser (userId: string) {
 
 }
 
-export async function  addUser (userId: string, password: string) {
+export async function addUser (userId: string, password: string) {
     return fetch('http://' + IPv4Adress + ':' + port +'/graphql', {
         method: 'POST',
         headers: {
@@ -166,7 +166,7 @@ export async function  addUser (userId: string, password: string) {
     },
     body: JSON.stringify({
     query: `
-        mutation RemoveLike($userId: String!, $password: String) {
+        mutation AddUser($userId: String!, $password: String) {
             addUser(id: $userId, password: $password) {
             favourites
             password
