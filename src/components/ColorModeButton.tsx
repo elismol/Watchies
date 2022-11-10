@@ -39,8 +39,8 @@ const ColorModeButton = () => {
         <Text style={{color: mode.buttonColor, fontSize: 10, margin: 0, padding: 0}}>Dark Mode:</Text>
         <Switch
           style={{margin: 0, padding: 0}}
-          trackColor={{ false: "#81b0ff", true: "#767577" }}
-          thumbColor={mode.enabled ? "#f4f3f4" : "#f5dd4b"}
+          trackColor={{ true: "#8c8c8c" , false: "#81b0ff"}}
+          thumbColor={mode.enabled ? "#ebebeb" : "#ffdb6e"}
           onValueChange={handleClick}
           value={mode.enabled}
         />
