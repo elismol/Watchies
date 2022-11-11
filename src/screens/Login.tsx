@@ -9,6 +9,9 @@ import { brightnessMode } from '../states/brightnessMode';
 import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
 import ColorModeButton from '../components/ColorModeButton';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { wHeight } from '../utils/Utils';
+import { showAccount } from '../states/showAccount';
 
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -26,6 +29,8 @@ const Login = ({navigation}: LoginProps) => {
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useRecoilState(refreshed); //handle if refresh while still logged in (skip login page)
   const [mode, setMode] = useRecoilState(brightnessMode);
+  const [showAccountState, setShowAccountState] = useRecoilState(showAccount);
+
 
   // clear error messages when typing into textinputs
   useEffect (() => {
@@ -36,6 +41,8 @@ const Login = ({navigation}: LoginProps) => {
 
   // if user wants to log out
   const handleCloseYes = () => {
+    setShowAccountState({show: false});
+    setRefresh({hasRefreshed: false, refresh: true});
     setOpen(false);
     AsyncStorage.setItem("active", "false");
   };
@@ -55,6 +62,7 @@ const Login = ({navigation}: LoginProps) => {
   const isActive = async () => {
       const active = await AsyncStorage.getItem("active");
       if(refresh.hasRefreshed && active === "true") { //if refreshed app while still logged in
+        setRefresh({hasRefreshed: true, refresh: true});
         navigation.navigate("Movies");
       }
       else if(active === "true") {
@@ -108,6 +116,7 @@ const Login = ({navigation}: LoginProps) => {
           addUser(email.toLowerCase(), password);
           AsyncStorage.setItem("email", email.toLowerCase());
           AsyncStorage.setItem("active", "true");
+          setRefresh({hasRefreshed: true, refresh: true});
           navigation.navigate('Movies');
         } else {
           setErrorMessageMail(true);
@@ -122,6 +131,7 @@ const Login = ({navigation}: LoginProps) => {
         AsyncStorage.setItem("email", email.toLowerCase());
         AsyncStorage.setItem("active", "true");
         setErrorMessage(true);
+        setRefresh({hasRefreshed: true, refresh: true});
         navigation.navigate('Movies');
       } else {
         setErrorMessage(false);
@@ -146,8 +156,27 @@ const Login = ({navigation}: LoginProps) => {
   }
 
     return (
-      <View>
-        <View style={{display: "flex", backgroundColor: mode.backgroundColor, height: "100%", width: "100%"}}>
+      <SafeAreaView style={{backgroundColor: mode.backgroundColor}}>
+        <View>
+          <Modal
+            animationType="none"
+            visible={open}
+            transparent={false}
+          >
+            <View style={{flex: 1, backgroundColor: mode.backgroundColor, justifyContent: 'center', flexDirection: "column"}}>
+              <View style={{display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
+                <Text style={{color: mode.fontColor, marginBottom: wHeight(3), fontSize: 20}}>Are you sure you want to log out?</Text>
+              </View>
+              <View style={{display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
+                <Button onPress={handleCloseYes} textColor={mode.fontColor} style={{backgroundColor: mode.buttonLogOutColor}}>Yes</Button>
+                <Button onPress={handleCloseNo} textColor={mode.fontColor} style={{backgroundColor: mode.buttonLogOutColor}}>No</Button>
+              </View> 
+            </View>
+          </Modal>
+        </View>
+        
+        {(refresh.refresh) ?
+        <View style={{display: "flex", height: "100%", width: "100%"}}>
           <View style={{display: "flex", flex:4, justifyContent: "flex-end", alignItems: "center", flexDirection: "column"}}>   
             <Image source={require("../resources/watchiesLogo.png")} resizeMode="contain" style={{height: "40%", width: "60%"}}/>
           </View>
@@ -158,11 +187,11 @@ const Login = ({navigation}: LoginProps) => {
           <View style={{flex:6, display: "flex", flexDirection: "column", justifyContent: "flex-start"}}>
             <TextInput
               label="Email"
-              left={<TextInput.Icon name="email" />}
+              left={<TextInput.Icon icon="email" />}
               mode="flat"
               activeUnderlineColor="purple"
               underlineColor="gray"
-              style={{ margin: 10, backgroundColor: mode.inputColor }}
+              style={{ margin: wHeight(1), backgroundColor: mode.inputBackgroundColor }}
               placeholder={"E-mail"} 
               value={email} 
               onChangeText={(text) => setEmail(text)}
@@ -170,11 +199,11 @@ const Login = ({navigation}: LoginProps) => {
             <TextInput
               label="Password"
               secureTextEntry
-              left={<TextInput.Icon name="form-textbox-password" />}
+              left={<TextInput.Icon icon="form-textbox-password" />}
               mode="flat"
               activeUnderlineColor="purple"
               underlineColor="gray"
-              style={{ margin: 10, backgroundColor: mode.inputColor }}
+              style={{ margin: wHeight(1), backgroundColor: mode.inputBackgroundColor }}
               placeholder={"Password"} 
               value={password} 
               onChangeText={(text) => setPassword(text)}
@@ -183,11 +212,11 @@ const Login = ({navigation}: LoginProps) => {
               <TextInput 
                 label="Confirm password"
                 secureTextEntry
-                left={<TextInput.Icon name="form-textbox-password" />}
+                left={<TextInput.Icon icon="form-textbox-password" />}
                 mode="flat"
-                activeUnderlineColor="#2985cc"
+                activeUnderlineColor="purple"
                 underlineColor="gray"
-                style={{ margin: 10, backgroundColor: mode.inputColor }}
+                style={{ margin: wHeight(1), backgroundColor: mode.inputBackgroundColor }}
                 placeholder={"Confirm password"} 
                 value={confirmPassword} 
                 onChangeText={(text) => setConfirmPassword(text)}
@@ -218,25 +247,10 @@ const Login = ({navigation}: LoginProps) => {
             <Button color={mode.buttonColor} onPress={handleSubmit}>{(showSignUp) ? "Sign up" : "Sign in"}</Button>
           </View>
         </View>
-
-        <View>
-          <Modal
-            animationType="none"
-            visible={open}
-            transparent={false}
-          >
-            <View>
-              <Text>Are you sure you want to log out?</Text>
-              <TouchableOpacity onPress={handleCloseYes}>
-                <Text>Yes</Text>
-              </TouchableOpacity>  
-              <TouchableOpacity onPress={handleCloseNo}>
-                <Text>No</Text>
-              </TouchableOpacity>      
-            </View> 
-          </Modal>
-        </View>
-      </View>
+          :
+        <></>
+        }
+      </SafeAreaView>
     );
 };
 export default Login;

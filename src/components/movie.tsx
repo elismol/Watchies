@@ -1,6 +1,8 @@
-import React, { useEffect, useState, PureComponent } from "react";
-import { Text, Image} from 'react-native';
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, View} from 'react-native';
+import { Text } from 'react-native-paper';
 import { IMovieType } from "../types/types";
+import { wWidth } from "../utils/Utils";
 
 // display movies on homepage
 const Movie = (props: IMovieType) => {
@@ -19,15 +21,31 @@ const Movie = (props: IMovieType) => {
     return (
         <>
             {(poster === require("../resources/loadingImage.png")) ?
-                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={{width: 100, height: 100}}/> 
+                <Image source={require("../resources/loadingImage.png")} resizeMode="contain" style={styles.image}/> 
                 : 
-                <Image source={poster} onError={imageError} resizeMode="contain" style={{width: 100, height: 100}}/>
+                <Image source={poster} onError={imageError} resizeMode="contain" style={styles.image}/>
             }
-            <Text>{props.title}</Text>
-            <Text>{props.year}</Text>
+                <Text ellipsizeMode='tail' numberOfLines={3} style={[styles.text, {fontWeight: 'bold'}]}>{props.title}</Text>
+                <View style={{display: "flex", justifyContent: "flex-end", flex: 1}}>
+                    <Text ellipsizeMode='tail' numberOfLines={1} style={styles.text}>{props.year}</Text>
+                </View>
         </>
     );
 }
 
 
-export default React.memo(Movie);
+export default Movie;
+
+const styles = StyleSheet.create({
+    image: {
+      width: "100%", 
+      height: "72%",
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
+      resizeMode: "stretch"
+    },
+    text: {
+        textAlign: "center", 
+        fontSize: wWidth(3.2)
+    }
+});

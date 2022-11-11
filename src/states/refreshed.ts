@@ -5,5 +5,6 @@ export const refreshed = atom({
   key: "refreshed",
   default: {
     hasRefreshed: true,
+    refresh: true,
   },
 });

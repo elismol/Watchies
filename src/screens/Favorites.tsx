@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Button, Modal, Pressable, ScrollView, Text , TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Modal, Pressable, ScrollView, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import { getMovie, getUser } from '../api/movieAPI';
 import { IMovieType } from '../types/types';
 import Movie from '../components/Movie';
@@ -17,6 +17,10 @@ import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
 import ColorModeButton from '../components/ColorModeButton';
 import { brightnessMode } from '../states/brightnessMode';
+import Header from '../components/Header';
+import { wHeight, wWidth } from '../utils/Utils';
+import { TextInput } from 'react-native-paper';
+import { movieStyles } from '../themes/movieStyles';
 
 type FavoritesProps = NativeStackScreenProps<RootStackParamList, 'Favorites'>;
 
@@ -59,7 +63,7 @@ const Favorites = ({navigation}: FavoritesProps) => {
             navigation.navigate("Login");
         }
         else {
-            setRefresh({hasRefreshed: false});
+            setRefresh({hasRefreshed: false, refresh: false});
         }
     };
 
@@ -97,34 +101,38 @@ const Favorites = ({navigation}: FavoritesProps) => {
         setFetchingData(false);
     }
 
+
+
     return (
-        <SafeAreaView>
-        <AccountInfo email={email}></AccountInfo>
-        <ColorModeButton></ColorModeButton>
-        <Text>My favorite movies</Text>
+        <>
+        <SafeAreaView style={{display: "flex", flex: 1, backgroundColor: mode.backgroundColor}}>
+            <View  style={{backgroundColor: mode.backgroundColor}}>
+                <Header></Header>
+            </View>
+
         {(!fetchingData) ?
-        <ScrollView>
-            {favouriteMovies.map((movie:IMovieType) => 
-                <Pressable
-                    style={({ pressed }) => [
-                        {
-                            opacity: pressed? mode.pressOpacity : 1,
-                            backgroundColor: mode.cardColor,
-                            height: 150,
-                        },
-                        
-                        //kan legge til style.button feks her i tillegg
-                    ]}
-                    key={movie.id} 
-                    onPress={() => handleOpen(movie)}
-                >
-                    <Movie {...movie} />
-                </Pressable>
-            )}        
-        </ScrollView>
+        <View style={{flex: 1}}>
+            <FlatList
+                contentContainerStyle={movieStyles.movieContainer}
+                numColumns={3}
+                data={favouriteMovies}
+                keyExtractor={(movie: IMovieType) => movie.id}
+                renderItem={({item}) => (            
+                    <Pressable 
+                        style={
+                            movieStyles.cardContainer
+                        }
+                        key={item.id} 
+                        onTouchEndCapture={() => handleOpen(item)}
+                    >
+                        <Movie {...item} />
+                    </Pressable>
+                )}
+            />
+        </View> 
         :
         (noData) ? 
-            <Text>You have no favourite movies!</Text> 
+            <></>
             : 
             <View style={{
                     paddingVertical: 20,
@@ -135,7 +143,7 @@ const Favorites = ({navigation}: FavoritesProps) => {
             </View>
         }
 
-        {noData && !fetchingData ? <Text>You have no favourite movies!</Text> : <></>}
+        {noData && !fetchingData ? <Text style={{flex:1, alignSelf: "center", color: mode.fontColor}}>You have no favourite movies!</Text> : <></>}
 
         <View>
             <Modal
@@ -151,11 +159,9 @@ const Favorites = ({navigation}: FavoritesProps) => {
                         </TouchableOpacity>      
                     </View> 
                 </Modal>
-        </View>
-
+            </View>
         </SafeAreaView>
+        </>
     );
 };
 export default Favorites;
-
-

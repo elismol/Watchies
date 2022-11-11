@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { View } from "react-native";
-import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker, { ThemeNameType } from 'react-native-dropdown-picker';
+import { useRecoilState } from "recoil";
+import { brightnessMode } from "../states/brightnessMode";
+import { wHeight } from "../utils/Utils";
 
 // dropdown for sorting by year
 const filterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSort: (arg0: string) => void; }) => {
 
+    const [mode, setMode] = useRecoilState(brightnessMode);
     const [openSort, setOpenSort] = useState(false);
     const [valueSort, setValueSort] = useState("-1");
     const [itemsSort, setItemsSort] = useState([
@@ -54,16 +58,37 @@ const filterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSor
 
     const onOpenSort = useCallback(() => {
         setOpenFilter(false);
-      }, []);
+    }, []);
     
-      const onFilterSort = useCallback(() => {
-        setOpenSort(false);
-      }, []);
+    const onFilterSort = useCallback(() => {
+    setOpenSort(false);
+    }, []);
+
+    const [theme, setTheme] = useState<ThemeNameType | undefined>("DARK");
+    
+    useEffect(() => {
+        if(mode.dropDownColor === "#2A2D3E") {
+            setTheme("DARK");
+        }
+        else {
+            setTheme("LIGHT");
+        }
+    })
 
     return (
-        <View>
-            <View style={{width: '49%', zIndex: 10}}>
+        <View style={{display: "flex", flexDirection: "row"}}>
+            <View style={{flex: 1}}>
                 <DropDownPicker
+                    style={{
+                        backgroundColor: mode.dropDownColor, 
+                        borderTopRightRadius: 0, 
+                        borderTopLeftRadius: 0, 
+                        borderWidth: wHeight(0.5),
+                        borderRightWidth: wHeight(0.25),
+                        borderRadius: 0,
+                        borderColor: mode.navbarColor
+                    }}
+                    theme={theme}
                     open={openFilter}
                     onOpen={onFilterSort}
                     value={valueFilter}
@@ -74,8 +99,18 @@ const filterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSor
                 />
             </View>
 
-            <View style={{width: '49%', zIndex: 9}}>
+            <View style={{flex: 1}}>
                 <DropDownPicker
+                    style={{
+                        backgroundColor: mode.dropDownColor, 
+                        borderTopRightRadius: 0, 
+                        borderTopLeftRadius: 0, 
+                        borderWidth: wHeight(0.5),
+                        borderLeftWidth: wHeight(0.25),
+                        borderRadius: 0,
+                        borderColor: mode.navbarColor
+                    }}
+                    theme={theme}
                     open={openSort}
                     onOpen={onOpenSort}
                     value={valueSort}
