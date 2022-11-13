@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {addUser, getUser} from '../api/movieAPI';
-import { Button, Modal, Text , TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, Text , TouchableOpacity, View, StyleSheet, Image } from 'react-native';
+import { TextInput, Button } from "react-native-paper";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { RootStackParamList } from '../types/types';
+import { IMovieType, RootStackParamList } from '../types/types';
 import { brightnessMode } from '../states/brightnessMode';
 import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
+import ColorModeButton from '../components/ColorModeButton';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { wHeight, wWidth } from '../utils/Utils';
+import { showAccount } from '../states/showAccount';
+import { initialMovieState, modalMovie } from '../states/modalMovie';
+import { favouriteMoviesList } from '../states/favouriteMoviesList';
 
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -23,11 +30,26 @@ const Login = ({navigation}: LoginProps) => {
   const [errorMessageMail, setErrorMessageMail] = useState(false);
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useRecoilState(refreshed); //handle if refresh while still logged in (skip login page)
+  const [mode, setMode] = useRecoilState(brightnessMode);
+  const [showAccountState, setShowAccountState] = useRecoilState(showAccount);
+  const [modal, setModal] = useRecoilState(modalMovie);
+  const [favourites, setFavourites] = useRecoilState(favouriteMoviesList);
+
+  // clear error messages when typing into textinputs
+  useEffect (() => {
+    setErrorMessage(true);
+    setErrorMessagePassword(false);
+    setErrorMessageMail(false);
+  }, [email, password, confirmPassword]);
 
   // if user wants to log out
   const handleCloseYes = () => {
+    setShowAccountState({show: false});
+    setModal({movie: initialMovieState, openModal: false});
+    setRefresh({hasRefreshed: false, refresh: true});
     setOpen(false);
     AsyncStorage.setItem("active", "false");
+    setFavourites({movies: new Array<IMovieType>()})
   };
   
   // if user do not want to log out
@@ -45,6 +67,7 @@ const Login = ({navigation}: LoginProps) => {
   const isActive = async () => {
       const active = await AsyncStorage.getItem("active");
       if(refresh.hasRefreshed && active === "true") { //if refreshed app while still logged in
+        setRefresh({hasRefreshed: true, refresh: true});
         navigation.navigate("Movies");
       }
       else if(active === "true") {
@@ -66,13 +89,25 @@ const Login = ({navigation}: LoginProps) => {
   //Cheks if user exists in database and correct email-password combination is provided.
   function checkUser() {
     return (
-    getUser(email)
+    getUser(email.toLowerCase())
       .then((value) => {
         if (value.length == 1 && value[0].password == password) {
           return true;
         } else {
           return false;
         }
+  }))}
+
+  //Cheks if user exists in database and correct email-password combination is provided.
+  function checkEmail() {
+      return (
+      getUser(email.toLowerCase())
+        .then((value) => {
+          if (value.length == 1) {
+            return true;
+          } else {
+            return false;
+          }
   }))}
 
   //handle event when signing in/creating account.
@@ -82,10 +117,11 @@ const Login = ({navigation}: LoginProps) => {
     if (showSignUp) {
       //Checks if passwords matches and if the email already exists. If not, a new account is created.
       if (password == confirmPassword) {
-        if (!(await checkUser())) {
-          addUser(email, password);
-          AsyncStorage.setItem("email", email);
+        if (!(await checkEmail())) {
+          addUser(email.toLowerCase(), password);
+          AsyncStorage.setItem("email", email.toLowerCase());
           AsyncStorage.setItem("active", "true");
+          setRefresh({hasRefreshed: true, refresh: true});
           navigation.navigate('Movies');
         } else {
           setErrorMessageMail(true);
@@ -97,9 +133,10 @@ const Login = ({navigation}: LoginProps) => {
     }
     else { //Checks email and password against existing users.
       if (await checkUser()) {
-        AsyncStorage.setItem("email", email);
+        AsyncStorage.setItem("email", email.toLowerCase());
         AsyncStorage.setItem("active", "true");
         setErrorMessage(true);
+        setRefresh({hasRefreshed: true, refresh: true});
         navigation.navigate('Movies');
       } else {
         setErrorMessage(false);
@@ -124,39 +161,105 @@ const Login = ({navigation}: LoginProps) => {
   }
 
     return (
-      <View>
-        <View>
-          <Text></Text>
-          <Text></Text>
-          <Text>Movie Search</Text>
-          <Text> {title} </Text>
-          <TextInput placeholder={"E-mail"} value={email} onChangeText={(text) => setEmail(text.toLowerCase())}/>
-          {errorMessageMail ? <Text>Mail already taken</Text> : <></>}
-          <TextInput placeholder={"Password"} value={password} onChangeText={(text) => setPassword(text)}/>
-          {!showSignUp ?  <></> : <TextInput secureTextEntry={true}  placeholder={"Confirm password"} value={confirmPassword} onChangeText={(text) => setConfirmPassword(text)}/>}
-          {!errorMessage ? <Text>Wrong username or password</Text> : <></>}
-          {errorMessagePassword ? <Text>Passwords do not match</Text> : <></>}
-          <TouchableOpacity onPress={handleSignUp}><Text> {toggleButton} </Text></TouchableOpacity>
-          <TouchableOpacity onPress={handleSubmit}><Text>Sign in</Text></TouchableOpacity>
-        </View>
+      <SafeAreaView style={{backgroundColor: mode.backgroundColor}}>
         <View>
           <Modal
             animationType="none"
             visible={open}
             transparent={false}
           >
-            <View>
-              <Text>Are you sure you want to log out?</Text>
-              <TouchableOpacity onPress={handleCloseYes}>
-                <Text>Yes</Text>
-              </TouchableOpacity>  
-              <TouchableOpacity onPress={handleCloseNo}>
-                <Text>No</Text>
-              </TouchableOpacity>      
-            </View> 
+            <View style={{flex: 1, backgroundColor: mode.backgroundColor, justifyContent: 'center', flexDirection: "column"}}>
+              <View style={{display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
+                <Text style={{color: mode.fontColor, marginBottom: wHeight(3), fontSize: 20}}>Are you sure you want to log out?</Text>
+              </View>
+              <View style={{display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
+                <Button onPress={handleCloseYes} textColor={mode.fontColor} style={{backgroundColor: mode.buttonLogOutColor}}>Yes</Button>
+                <Button onPress={handleCloseNo} textColor={mode.fontColor} style={{backgroundColor: mode.buttonLogOutColor}}>No</Button>
+              </View> 
+            </View>
           </Modal>
         </View>
-      </View>
+        
+        {(refresh.refresh) ?
+        <View style={{display: "flex", height: "100%", width: "100%"}}>
+          <View style={{display: "flex", flex:4, justifyContent: "flex-end", alignItems: "center", flexDirection: "column"}}>   
+            <Image source={require("../resources/watchiesLogo.png")} resizeMode="contain" style={{height: "40%", width: "60%"}}/>
+          </View>
+          <View style={{flex:2, display: "flex", justifyContent: 'space-between', alignItems: "flex-end", flexDirection: 'row'}}>
+            <ColorModeButton></ColorModeButton>
+            <Button color={mode.buttonColor}><Text style={{fontSize: wHeight(1.4)}}>{title}</Text></Button>
+          </View>
+          <View style={{flex:6, display: "flex", flexDirection: "column", justifyContent: "flex-start"}}>
+            <TextInput
+              label="Email"
+              left={<TextInput.Icon icon="email" />}
+              mode="flat"
+              activeUnderlineColor="purple"
+              underlineColor="gray"
+              style={{ margin: wHeight(1), backgroundColor: mode.inputBackgroundColor }}
+              placeholder={"E-mail"} 
+              value={email} 
+              onChangeText={(text) => setEmail(text)}
+            />
+            <TextInput
+              label="Password"
+              secureTextEntry
+              left={<TextInput.Icon icon="form-textbox-password" />}
+              mode="flat"
+              activeUnderlineColor="purple"
+              underlineColor="gray"
+              style={{ margin: wHeight(1), backgroundColor: mode.inputBackgroundColor }}
+              placeholder={"Password"} 
+              value={password} 
+              onChangeText={(text) => setPassword(text)}
+            />
+            {showSignUp ?
+              <TextInput 
+                label="Confirm password"
+                secureTextEntry
+                left={<TextInput.Icon icon="form-textbox-password" />}
+                mode="flat"
+                activeUnderlineColor="purple"
+                underlineColor="gray"
+                style={{ margin: wHeight(1), backgroundColor: mode.inputBackgroundColor }}
+                placeholder={"Confirm password"} 
+                value={confirmPassword} 
+                onChangeText={(text) => setConfirmPassword(text)}
+              />
+                :
+              <></>
+            }
+
+            <View style={{display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: mode.errorMessageColor, marginHorizontal: wWidth(22), borderRadius: 4}}>
+              {errorMessageMail ? 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Mail already taken</Text> 
+                  : 
+                <></>
+              }
+
+              {!errorMessage ?
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Wrong username or password</Text> 
+                  : 
+                <></>
+              }
+              {errorMessagePassword ? 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Passwords do not match</Text> 
+                  : 
+                <></>
+              }
+            </View>
+            <Button color={mode.buttonColor} onPress={handleSignUp}>
+              <Text style={{fontSize: wWidth(3.8)}}>{toggleButton}</Text>
+            </Button>
+            <Button color={mode.buttonColor} onPress={handleSubmit}>
+              <Text style={{fontSize: wWidth(3.8)}}>{(showSignUp) ? "Sign up" : "Sign in"}</Text>
+            </Button>
+          </View>
+        </View>
+          :
+        <></>
+        }
+      </SafeAreaView>
     );
 };
 export default Login;

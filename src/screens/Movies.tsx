@@ -1,19 +1,22 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, StatusBar, Text , TextInput, TouchableOpacity, View,Modal, FlatList, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Text, View, FlatList, ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IfetchType, IMovieType } from '../types/types';
 import useFetch from '../hooks/useFetch';
-import Movie from '../components/movie';
-import MovieInfo from '../components/movieInfo';
-import FilterSort from '../components/filterSort';
+import Movie from '../components/Movie';
+import SearchFilterSort from '../components/SearchFilterSort';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../types/types';
 import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AccountInfo from '../components/AccountInfo';
-import ColorModeButton from '../components/ColorModeButton';
 import { brightnessMode } from '../states/brightnessMode';
+import Header from '../components/Header';
+import { wHeight, wWidth } from '../utils/Utils';
+import { movieStyles } from '../themes/movieStyles';
+import ModalMovieInfo from '../components/ModalMovieInfo';
+import { getMovie, getUser } from '../api/movieAPI';
+import { favouriteMoviesList } from '../states/favouriteMoviesList';
 
 type MoviesProps = NativeStackScreenProps<RootStackParamList, 'Movies'>;
 
@@ -24,50 +27,12 @@ const Movies = ({navigation}: MoviesProps) => {
     const [genreWord, setGenreWord] = useState("");
     const [searchWord, setSearchWord] = useState("");
     const [orderBy, setOrderBy] = useState("-1");
-    const [open, setOpen] = useState(false);
     const [refresh, setRefresh] = useRecoilState(refreshed);
-    const handleOpen = (movie:IMovieType) => {setModalMovie(movie); setOpen(true)};
-    const handleClose = () => setOpen(false);
-    const [email, setEmail] = useState("");
     const [mode, setMode] = useRecoilState(brightnessMode);
-
-
-        // initial IMovieType object
-        const initialMovieState:IMovieType = {
-            genre: new Array(''),
-            id: "0",
-            imdblink: "",
-            imdbscore: "",
-            posterlink: "",
-            title: "",
-            year: ""
-        }
-
-    const [modalMovie, setModalMovie] = useState(initialMovieState);
-
-    //Cheks if user is signed in. Navigates to login page if not. 
-    useEffect(() => {
-        isActive();
-        getEmail();
-    },[]);
-
-    const isActive = async () => {
-        const active = await AsyncStorage.getItem("active");
-        if(active === "false") {
-            navigation.navigate("Login");
-        }
-        else {
-            setRefresh({hasRefreshed: false});
-        }
-    };
-
-    //get email for account
-    const getEmail = async () => {
-        const previousEmail = await AsyncStorage.getItem("email");
-        if(previousEmail !== undefined) {
-            setEmail(previousEmail || "");
-        }
-    };
+    const [coordinateY, setCoordinateY] = useState(0);
+    const [showSearchBar, setShowSearchBar] = useState<("flex" | "none" | undefined)>("flex");
+    const [searchBarChanged, setSearchBarChanged] = useState(true);
+    const [favouriteMovies, setFavouriteMovies] = useRecoilState(favouriteMoviesList);
 
     // initial IfetchType object
     const querySearch: IfetchType = {
@@ -77,9 +42,54 @@ const Movies = ({navigation}: MoviesProps) => {
         orderBy: orderBy
     }
 
-    const [query, setQuery] = useState<IfetchType>(querySearch);
-    const [page, setPage] = useState(0);
-    const { loading, list } = useFetch(query, page);
+    const [query, setQuery] = useState<IfetchType>(querySearch); //holds the current query for useFetch
+    const [page, setPage] = useState(0); //keep track of which page
+    const { loading, list } = useFetch(query, page); //hook to get movies and add into list
+    const flatListRef = useRef<FlatList>(null); //ref for scrolling to top
+
+
+
+    //Cheks if user is signed in. Navigates to login page if not. 
+    useEffect(() => {
+            isActive();
+            fetchFavouriteMovies();
+    },[]);
+
+    const isActive = async () => {
+        const active = await AsyncStorage.getItem("active");
+        if(!active) {
+            navigation.navigate("Login");
+        }
+        else {
+            setRefresh({hasRefreshed: false, refresh: false});
+        }
+    }
+
+    //Fetches favourite list and set email for accountCom
+    const fetchFavourites = async () => {
+        const email = await AsyncStorage.getItem("email");
+
+        return await getUser(email || "")
+            .then((value) => {
+                return value[0].favourites
+            })
+    }
+
+    //Fetches favourite movies using the ids fetched in fetchFavourites().
+    const fetchFavouriteMovies = async () => {
+        const favouriteIds:string[] = await fetchFavourites();
+
+        let movies: IMovieType[] = [];
+        for(let i=0; i<favouriteIds.length; i++) {
+            await getMovie(favouriteIds[i])
+                .then((value: IMovieType) => {
+                    movies[i] = value;          
+                });
+        }
+        setFavouriteMovies({movies: movies});
+        
+        return movies;
+    }
 
     //Fetches movies by query.
     const fetchMovies = (limit: number, filterWord: string, searchWord: string, orderBy: string) => {
@@ -94,29 +104,62 @@ const Movies = ({navigation}: MoviesProps) => {
 
     //Handles input from search bar and fetches movies according to the input. 
     const onSearchChange = (value: string) => {
+        flatListRef.current?.scrollToOffset({animated: false, offset: 0});
         setSearchWord(value);
         setPage(0);
         fetchMovies(limit, genreWord, value, orderBy);
     }
 
-    //Handles input from genre menu and fetches movies according to the input. 
-    const onGenreClick = (character:string) => {
+    //Handles input from genre and fetches movies according to the input. 
+    const onChangeFilter = (character:string) => {
         if (character == "All"){ character = "";}
+        flatListRef.current?.scrollToOffset({animated: false, offset: coordinateY});
+        flatListRef.current?.scrollToOffset({animated: false, offset: 0});
         setGenreWord(character);
         setPage(0);
         fetchMovies(limit, character, searchWord, orderBy);
     }
 
-    //Handles input from order menu and fetches movies according to the input. 
-    const onOrderByClick = (character:string) => {
+    //Handles input from order and fetches movies according to the input. 
+    const onChangeSort = (character:string) => {
+        flatListRef.current?.scrollToOffset({animated: false, offset: 0});
         setOrderBy(character);
         setPage(0);
         fetchMovies(limit, genreWord, searchWord, character);
     }
 
+    // loading icon or text when fetching movies
     const renderFooter = () => {
-        if (loading) {
-            return (<Text>No more movies found.</Text>);
+        if (!loading && list.length !==0) {
+            return (
+                <Text style={{
+                    flex:1, 
+                    marginBottom: wHeight(2), 
+                    alignSelf: "center", 
+                    color: mode.inputColor
+                }}
+                >
+                    No more movies found
+                </Text>);
+        }
+        else if (!loading && list.length === 0) {
+            console.log("yueyey")
+            return(
+                <View style={{                    
+                    zIndex: 10,
+                    flex:1, 
+                    justifyContent: "center",
+                    alignItems: "center", 
+                }}>
+                    <Text style={{
+                        color: mode.inputColor, 
+                        textAlign: "center", 
+                    }}
+                    >
+                        No movies matched your search
+                    </Text>
+                </View>
+            );
         }
         else {
             return (
@@ -131,61 +174,86 @@ const Movies = ({navigation}: MoviesProps) => {
         }
     }    
 
+    // fetch more movies
+    const newPage = () => {
+        if(loading && coordinateY > wHeight(50)) {
+            setPage((prev: number) => ((prev/limit)+1)*limit);
+        }
+    }
+
+    //show searchbar when scrolling down and hide when scrolling up
+    function showSearch (event: NativeSyntheticEvent<NativeScrollEvent>) {
+        const flooredY = Math.floor(event.nativeEvent.contentOffset.y);
+        if (flooredY <= wHeight(15.5)) {
+            setShowSearchBar("flex");
+        }
+        else if(!searchBarChanged && flooredY > coordinateY && (flooredY-coordinateY) > 5 && flooredY > wHeight(15.5) && showSearchBar !== "none") {
+            setSearchBarChanged(true);
+            setShowSearchBar("none");
+        }
+        else if(!searchBarChanged && flooredY < coordinateY && flooredY > wHeight(15.5) && showSearchBar !== "flex") {
+            setSearchBarChanged(true);
+            setShowSearchBar("flex");
+        }
+
+        if(flooredY !== coordinateY) {
+            if(searchBarChanged && Math.abs((flooredY-coordinateY)) > wHeight(1)) {
+                setSearchBarChanged(false);
+            }
+            else {
+                setCoordinateY(flooredY);
+            }
+        }
+    }
+
     return (
         <>
-        <SafeAreaView>
-        <View>
-            <Text style={{color: mode.fontColor}}>Movie search</Text>
-
-            <View>
-                <View >
-                    <TextInput 
-                        placeholder="Search for a movie" 
-                        value={searchWord} 
-                        onChangeText={(text) => onSearchChange(text)}
-                    />
-                </View>
-                <View>
-                    <FilterSort onChangeSort={onOrderByClick} onChangeFilter={onGenreClick} />
-                </View>
+        <SafeAreaView style={{display: "flex", flex: 1, flexDirection: "column", backgroundColor: mode.backgroundColor}}>
+            <Header></Header>
+            
+            <View style={{height: wHeight(15.5), display: "flex", position: "absolute", marginTop: wHeight(10)}}>                   
+                    <View style={{flex: 1, display: showSearchBar, width: wWidth(100)}}>
+                        <SearchFilterSort 
+                            onChangeSort={onChangeSort} 
+                            onChangeFilter={onChangeFilter} 
+                            onSearchChange={onSearchChange} 
+                            searchValue={searchWord}/>
+                    </View>
             </View>
-        </View>
-        <AccountInfo email={email}></AccountInfo>
-        <ColorModeButton></ColorModeButton>
-        <SafeAreaView>
-            <FlatList
-                data={list}
-                keyExtractor={(movie: IMovieType) => movie.id}
-                onEndReached={() => setPage((prev: number) => ((prev/limit)+1)*limit)}
-                onEndReachedThreshold={1}
-                ListFooterComponent={renderFooter}
-                renderItem={({item}) => (
-                    <TouchableOpacity style={{height: 80}} key={item.id} onPress={() => handleOpen(item)}>
-                        <Movie {...item} />
-                    </TouchableOpacity>
-                )}
-            />  
+            
+            <View style={{flex: 1}}>
+                <FlatList
+                    ref={flatListRef}
+                    contentContainerStyle={movieStyles.movieContainer}
+                    numColumns={3}
+                    data={list}
+                    keyExtractor={(movie: IMovieType) => movie.id}
+                    onEndReached={newPage}
+                    onEndReachedThreshold={0.001}
+                    initialNumToRender={200}
+                    maxToRenderPerBatch={200} //stores a render of 200 at a time
+                    ListFooterComponent={renderFooter}
+                    ListHeaderComponent={<Text style={{height: wHeight(15.5), color: mode.fontColor}}>You are not supposed to see this</Text>}
+                    onScroll={(event) => showSearch(event)}
+                    renderItem={({item}) => (     
+                            <Movie {...item} />
+                    )}
+                />
+            </View>  
         </SafeAreaView>
+        <ModalMovieInfo/> 
+        {/* this modal pop ups on both Moves and Favorites, 
+        I dont know why lol, if i try to add it to favorites 
+        and remove it from Movies, it only pops up in favorites.
+        If I add to both, then it will open 2 modals in favorite,
+        however you will have to close one of them to navigate
+        to favorites to check, so there will only be one left.
 
-        <View>
-            <Modal
-                animationType="slide"
-                visible={open}
-                onRequestClose={handleClose}
-                transparent={false} // set to true when styling is done
-            >
-                <View>
-                    <MovieInfo {...modalMovie}/>  
-                    <TouchableOpacity onPress={handleClose}>
-                        <Text>Close</Text>
-                    </TouchableOpacity>      
-                </View> 
-            </Modal>
-        </View>
-
-        <View/>
-        </SafeAreaView>
+        Basically, the ModalMovieInfo that is placed in Favorites 
+        will open up ONE common render over both Movies and Favorites 
+        at the same time.*/}
         </>
-        )};
+        );
+    };
 
 export default Movies;

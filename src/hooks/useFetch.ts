@@ -4,11 +4,11 @@ import { IfetchType, IMovieType } from "../types/types";
 
 // custom callback hook to fetch more movies when scrolling
 function useFetch(query:IfetchType, offset: number) {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [list, setList] = useState<IMovieType[]>([]);
 
   const sendQuery = useCallback(async (query:IfetchType) => {
-      await setLoading(false);
+      setLoading(true);
       let multiplier = 2;
       if(offset===0) {
         multiplier = 1;
@@ -16,12 +16,28 @@ function useFetch(query:IfetchType, offset: number) {
       // movies would get fetched in slightly different order from time to time
       // therefore, we fetch 60 movies and gets the first 30 unique ones that has not been displayed earlier
       // the offset (set to 30) and the rest of the query are decided in movies.tsx
-      setTimeout(() => {
         getMovies(offset, query.limit*multiplier, query.filterWord, query.searchWord, query.orderBy).then((value) => {
-            if(offset===0){
-                setList(value);
+            if(value === null) { // the fetch returns value as null if the searchword has no matches and special characters at the same time
+                setList([]);
+                setLoading(false);
+            }
+
+            else if(offset===0 || (list.length <= query.limit && value.length === 0)){
                 if(value.length === 0) {
-                    setLoading(true);
+                    if(offset > 0) {
+                        setLoading(false);
+                    }
+                    else {
+                        setList(value);
+                        setLoading(false);
+                    }
+                }
+                else if (value.length < query.limit) {
+                    setList(value);
+                    setLoading(false);
+                }
+                else {
+                    setList(value);
                 }
             }
             // filter out the first 30 unique movies because of the movies getting fetched
@@ -44,11 +60,10 @@ function useFetch(query:IfetchType, offset: number) {
                 });
                 setList([...list, ...movList]);
                 if(value.length === 0) {
-                    setLoading(true);
+                    setLoading(false);
                 }
             }
           });
-      }, 800);
   }, [offset]);
 
   useEffect(() => {

@@ -1,26 +1,44 @@
 import React from "react";
 import { View, Text, Switch, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
+import { lightMode, darkMode } from "../themes/themes";
+import { wHeight } from "../utils/Utils";
 
 //switch to handle light or dark mode with recoil state.
 const ColorModeButton = () => {
   const [mode, setMode] = useRecoilState(brightnessMode);
 
   const handleClick = () => {
-    (mode.backgroundColor === "black") ? setMode({backgroundColor: "white", fontColor: "black", navbarColor: "#f0f0f0", enabled: false}) : setMode({backgroundColor: "black", fontColor: "white", navbarColor: "#151515", enabled: true});
+    (mode.backgroundColor === darkMode.backgroundColor) ? 
+      setMode(lightMode) 
+        : 
+      setMode(darkMode);
   }
     
   return(
-      <View>
-        <Text>Dark Mode:</Text>
+    <SafeAreaView>
+      <View style={{
+        display: "flex", 
+        flexDirection: "row", 
+        alignItems: "center", 
+        justifyContent: "flex-end", 
+        alignSelf: "flex-end", 
+        marginLeft: 5, 
+        margin: 0, 
+        padding: 0
+      }}>
         <Switch
-          trackColor={{ false: "#81b0ff", true: "#767577" }}
-          thumbColor={mode.enabled ? "#f4f3f4" : "#f5dd4b"}
-          onValueChange={handleClick}
-          value={mode.enabled}
-        />
+            style={{margin: 0, padding: 0, height: wHeight(4.2)}}
+            trackColor={{ true: "#8c8c8c" , false: "#81b0ff"}}
+            thumbColor={mode.enabled ? "#ebebeb" : "#ffdb6e"}
+            onValueChange={handleClick}
+            value={mode.enabled}
+          />
+        <Text style={{color: mode.navbarColor, fontSize: wHeight(1.4), margin: 0, padding: 0}}>Dark Mode</Text>
       </View>
+    </SafeAreaView>
   );
 
 }
