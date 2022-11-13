@@ -27,10 +27,7 @@ const AccountInfo = () => {
 
     // sets new state when clicking on the user icon regardless of which page
     useEffect(() => {
-        console.log("chkec");
-        console.log(showAccountState.show);
         if(showAccountState.show) {
-            console.log(email);
             setShowEmail(email);
         }
         else {
@@ -56,8 +53,8 @@ const AccountInfo = () => {
             <TextInput
                 editable={false}
                 value={showEmail}
-                textColor={mode.buttonColor}
-                underlineColor={mode.navbarColor}
+                textColor={mode.navbarColor}
+                underlineColor={mode.navbarBackgroundColor}
                 right={
                     <TextInput.Icon icon={() => 
                         <TouchableOpacity onPress={handleShowEmail}>
@@ -70,7 +67,7 @@ const AccountInfo = () => {
                     />
                 }
                 style={{
-                    backgroundColor: mode.navbarColor,
+                    backgroundColor: mode.navbarBackgroundColor,
                     height: wHeight(3),
                     textAlign: "right",
                     fontSize: wHeight(1.4),

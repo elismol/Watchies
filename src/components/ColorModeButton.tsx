@@ -30,13 +30,13 @@ const ColorModeButton = () => {
         padding: 0
       }}>
         <Switch
-            style={{margin: 0, padding: 0}}
+            style={{margin: 0, padding: 0, height: wHeight(4.2)}}
             trackColor={{ true: "#8c8c8c" , false: "#81b0ff"}}
             thumbColor={mode.enabled ? "#ebebeb" : "#ffdb6e"}
             onValueChange={handleClick}
             value={mode.enabled}
           />
-        <Text style={{color: mode.buttonColor, fontSize: wHeight(1.4), margin: 0, padding: 0}}>Dark Mode</Text>
+        <Text style={{color: mode.navbarColor, fontSize: wHeight(1.4), margin: 0, padding: 0}}>Dark Mode</Text>
       </View>
     </SafeAreaView>
   );

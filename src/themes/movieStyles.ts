@@ -10,12 +10,10 @@ export const movieStyles = StyleSheet.create({
         borderTopRightRadius: 10,
         width: wWidth(30),
         height: wWidth(60),
-        marginHorizontal: wWidth(1.25),
+        marginHorizontal: wWidth(1.66),
         marginBottom: wHeight(2),
-        backgroundColor: "lightskyblue",
         borderRadius: 10,
         paddingBottom: wHeight(1),
-        maxHeight: 400,
         overflow: "hidden",
     },
     movieContainer: {

@@ -4,14 +4,16 @@ import { Modal, Text , TouchableOpacity, View, StyleSheet, Image } from 'react-n
 import { TextInput, Button } from "react-native-paper";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { RootStackParamList } from '../types/types';
+import { IMovieType, RootStackParamList } from '../types/types';
 import { brightnessMode } from '../states/brightnessMode';
 import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
 import ColorModeButton from '../components/ColorModeButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { wHeight } from '../utils/Utils';
+import { wHeight, wWidth } from '../utils/Utils';
 import { showAccount } from '../states/showAccount';
+import { initialMovieState, modalMovie } from '../states/modalMovie';
+import { favouriteMoviesList } from '../states/favouriteMoviesList';
 
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -30,7 +32,8 @@ const Login = ({navigation}: LoginProps) => {
   const [refresh, setRefresh] = useRecoilState(refreshed); //handle if refresh while still logged in (skip login page)
   const [mode, setMode] = useRecoilState(brightnessMode);
   const [showAccountState, setShowAccountState] = useRecoilState(showAccount);
-
+  const [modal, setModal] = useRecoilState(modalMovie);
+  const [favourites, setFavourites] = useRecoilState(favouriteMoviesList);
 
   // clear error messages when typing into textinputs
   useEffect (() => {
@@ -42,9 +45,11 @@ const Login = ({navigation}: LoginProps) => {
   // if user wants to log out
   const handleCloseYes = () => {
     setShowAccountState({show: false});
+    setModal({movie: initialMovieState, openModal: false});
     setRefresh({hasRefreshed: false, refresh: true});
     setOpen(false);
     AsyncStorage.setItem("active", "false");
+    setFavourites({movies: new Array<IMovieType>()})
   };
   
   // if user do not want to log out
@@ -182,7 +187,7 @@ const Login = ({navigation}: LoginProps) => {
           </View>
           <View style={{flex:2, display: "flex", justifyContent: 'space-between', alignItems: "flex-end", flexDirection: 'row'}}>
             <ColorModeButton></ColorModeButton>
-            <Button color={mode.buttonColor}> {title} </Button>
+            <Button color={mode.buttonColor}><Text style={{fontSize: wHeight(1.4)}}>{title}</Text></Button>
           </View>
           <View style={{flex:6, display: "flex", flexDirection: "column", justifyContent: "flex-start"}}>
             <TextInput
@@ -225,26 +230,30 @@ const Login = ({navigation}: LoginProps) => {
               <></>
             }
 
-            <View style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <View style={{display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: mode.errorMessageColor, marginHorizontal: wWidth(22), borderRadius: 4}}>
               {errorMessageMail ? 
-                <Text style={{color: "red", margin: 0, padding: 0}}>Mail already taken</Text> 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Mail already taken</Text> 
                   : 
                 <></>
               }
 
               {!errorMessage ?
-                <Text style={{color: "red", margin: 0, padding: 0}}>Wrong username or password</Text> 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Wrong username or password</Text> 
                   : 
                 <></>
               }
               {errorMessagePassword ? 
-                <Text style={{color: "red", margin: 0, padding: 0}}>Passwords do not match</Text> 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Passwords do not match</Text> 
                   : 
                 <></>
               }
             </View>
-            <Button color={mode.buttonColor} onPress={handleSignUp}>{toggleButton}</Button>
-            <Button color={mode.buttonColor} onPress={handleSubmit}>{(showSignUp) ? "Sign up" : "Sign in"}</Button>
+            <Button color={mode.buttonColor} onPress={handleSignUp}>
+              <Text style={{fontSize: wWidth(3.8)}}>{toggleButton}</Text>
+            </Button>
+            <Button color={mode.buttonColor} onPress={handleSubmit}>
+              <Text style={{fontSize: wWidth(3.8)}}>{(showSignUp) ? "Sign up" : "Sign in"}</Text>
+            </Button>
           </View>
         </View>
           :

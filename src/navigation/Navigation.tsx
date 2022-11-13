@@ -20,9 +20,9 @@ const Navigation = () => {
     return (
         <>
           {(mode.statusbar === "light-content") ?
-            <StatusBar barStyle={"light-content"} backgroundColor={mode.backgroundColor}/>
+            <StatusBar barStyle={"light-content"} backgroundColor={mode.navbarBackgroundColor}/>
               :
-            <StatusBar barStyle={"dark-content"} backgroundColor={mode.backgroundColor}/>
+            <StatusBar barStyle={"dark-content"} backgroundColor={mode.navbarBackgroundColor}/>
           }
           <NavigationContainer>
           <Tab.Navigator 
@@ -32,7 +32,7 @@ const Navigation = () => {
               tabBarActiveTintColor: mode.fontColor,
               tabBarStyle: {
                 borderTopWidth: 0,
-                backgroundColor: mode.navbarColor,
+                backgroundColor: mode.navbarBackgroundColor,
                 minHeight: wHeight(6.6),
                 paddingBottom: wHeight(0.8),
               },
@@ -59,14 +59,14 @@ const Navigation = () => {
             />
             <Tab.Screen 
               options={{
-                unmountOnBlur: true, 
+                unmountOnBlur: false, 
                 tabBarIcon: () => {
                   return (
                     <View>
                       <Image
-                        source={require('../resources/star.png')}
+                        source={require('../resources/starOneTone.png')}
                         resizeMode="contain"
-                        style={{ width: wWidth(6.3) }}
+                        style={{ width: wWidth(6.3079), height: wWidth(6.6)}}
                       />
                     </View>
                   );

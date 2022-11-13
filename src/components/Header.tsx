@@ -14,7 +14,7 @@ const Header = () => {
             <View style={{
                 height: wHeight(5), 
                 display: "flex", 
-                backgroundColor: mode.navbarColor
+                backgroundColor: mode.navbarBackgroundColor
             }}>   
                 <Image source={require("../resources/watchiesLogo.png")} resizeMode="contain" style={{display: "flex", alignSelf: "center", height: "100%"}}/>
             </View>
@@ -24,7 +24,7 @@ const Header = () => {
                 alignItems: "flex-end", 
                 flexDirection: 'row', 
                 height: wHeight(5), 
-                backgroundColor: mode.navbarColor
+                backgroundColor: mode.navbarBackgroundColor
             }}>        
                 <ColorModeButton></ColorModeButton>
                 <AccountInfo></AccountInfo>

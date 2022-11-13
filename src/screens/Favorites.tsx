@@ -21,40 +21,22 @@ import Header from '../components/Header';
 import { wHeight, wWidth } from '../utils/Utils';
 import { TextInput } from 'react-native-paper';
 import { movieStyles } from '../themes/movieStyles';
+import ModalMovieInfo from '../components/ModalMovieInfo';
+import { initialMovieState, modalMovie } from '../states/modalMovie';
+import { favouriteMoviesList } from '../states/favouriteMoviesList';
 
 type FavoritesProps = NativeStackScreenProps<RootStackParamList, 'Favorites'>;
 
 const Favorites = ({navigation}: FavoritesProps) => {
-
-    //Initial movie of type IMovieType
-    const initialMovieState:IMovieType = {
-        genre: new Array(''),
-        id: "0",
-        imdblink: "",
-        imdbscore: "",
-        posterlink: "",
-        title: "",
-        year: ""
-    }
     
-    const [favouriteMovies, setFavouriteMovies] = useState<IMovieType[]>([]);
-    const [fetchingData, setFetchingData] = useState(true);
-    const [noData, setNoData] = useState(true);
-    const [open, setOpen] = useState(false);
-    const [modalMovie, setModalMovie] = useState(initialMovieState);
     const [refresh, setRefresh] = useRecoilState(refreshed);
     const [mode, setMode] = useRecoilState(brightnessMode);
-    const [email, setEmail] = useState("");
-    
-    // handles opening and closing the dialog pop up
-    const handleOpen = (movie:IMovieType) => {setModalMovie(movie); setOpen(true)};
-    const handleClose = () => {setOpen(false); fetchFavouriteMovies();};
+    const [favouriteMovies, setFavouriteMovies] = useRecoilState(favouriteMoviesList);
 
     //Cheks if user is signed in. Navigates to login page if not. 
     //get users favorite movies after first render
     useEffect(()=> {
         isActive();
-        fetchFavouriteMovies();
     }, []);
 
     const isActive = async () => {
@@ -67,101 +49,36 @@ const Favorites = ({navigation}: FavoritesProps) => {
         }
     };
 
-    //Fetches favourite list consisting of ids for movies. 
-    const fetchFavourites = async () => {
-        const previousEmail = await AsyncStorage.getItem("email");
-        if(previousEmail !== undefined) {
-            setEmail(previousEmail || "");
-        }
-
-        return await getUser(previousEmail || "")
-            .then((value) => {
-                if (value[0].favourites.length > 0) {
-                    setNoData(false);
-                }
-                else {
-                    setNoData(true);
-                }
-            return value[0].favourites})
-    }
-
-    //Fetches favourite movies using the ids fetched in fetchFavourites().
-    const fetchFavouriteMovies = async () => {
-        setFetchingData(true);
-        const favouriteIds:string[] = await fetchFavourites();
-
-        let movies: IMovieType[] = [];
-        for(let i=0; i<favouriteIds.length; i++) {
-            await getMovie(favouriteIds[i])
-                .then((value: IMovieType) => {
-                    movies[i] = value;          
-                });
-        }
-        setFavouriteMovies(movies);
-        setFetchingData(false);
-    }
-
-
+    // loading icon or text when fetching movies
+    const renderFooter = () => {
+        return (
+            (favouriteMovies.movies.length === 0) ?
+                <Text style={{flex:1, alignSelf: "center", paddingTop: wHeight(40), color: mode.inputColor}}>No favourite movies found</Text>
+                    :
+                <></>
+        )
+    }    
 
     return (
         <>
-        <SafeAreaView style={{display: "flex", flex: 1, backgroundColor: mode.backgroundColor}}>
-            <View  style={{backgroundColor: mode.backgroundColor}}>
-                <Header></Header>
-            </View>
+        <SafeAreaView style={{display: "flex", flex: 1, flexDirection: "column", backgroundColor: mode.backgroundColor}}>
+            <Header></Header>
 
-        {(!fetchingData) ?
-        <View style={{flex: 1}}>
-            <FlatList
+            <View style={{flex: 1}}>
+                <FlatList
                 contentContainerStyle={movieStyles.movieContainer}
+                ListFooterComponent={renderFooter}
+                ListHeaderComponent={<View style={{height: wHeight(2)}}></View>}
                 numColumns={3}
-                data={favouriteMovies}
+                data={favouriteMovies.movies}
                 keyExtractor={(movie: IMovieType) => movie.id}
                 renderItem={({item}) => (            
-                    <Pressable 
-                        style={
-                            movieStyles.cardContainer
-                        }
-                        key={item.id} 
-                        onTouchEndCapture={() => handleOpen(item)}
-                    >
                         <Movie {...item} />
-                    </Pressable>
                 )}
             />
-        </View> 
-        :
-        (noData) ? 
-            <></>
-            : 
-            <View style={{
-                    paddingVertical: 20,
-                    borderTopWidth: 1,
-                    borderColor: "#CED0CE",
-                }}>
-                <ActivityIndicator animating size="large"/>
-            </View>
-        }
-
-        {noData && !fetchingData ? <Text style={{flex:1, alignSelf: "center", color: mode.fontColor}}>You have no favourite movies!</Text> : <></>}
-
-        <View>
-            <Modal
-                    animationType="slide"
-                    visible={open}
-                    onRequestClose={handleClose}
-                    transparent={false} // set to true when styling is done
-                >
-                    <View>
-                        <MovieInfo {...modalMovie}/>  
-                        <TouchableOpacity onPress={handleClose}>
-                            <Text>Close</Text>
-                        </TouchableOpacity>      
-                    </View> 
-                </Modal>
-            </View>
+            </View>  
         </SafeAreaView>
         </>
-    );
-};
+        );
+    };
 export default Favorites;
