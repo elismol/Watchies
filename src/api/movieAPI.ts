@@ -2,7 +2,7 @@
 // Change the IPv4Adress to your computers IPv4
 // Mac: https://www.wikihow.com/Find-Your-IP-Address-on-a-Mac
 // Windows: https://www.businessinsider.com/guides/tech/how-to-find-ip-address-on-windows?r=US&IR=T
-const IPv4Adress = "192.168.0.146";
+const IPv4Adress = "it2810-58.idi.ntnu.no";
 
 const port = "8080";
 
