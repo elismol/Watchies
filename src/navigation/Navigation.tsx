@@ -1,14 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import React, { useEffect, useState, PureComponent } from "react";
-import { Text, Image, View, StatusBar} from 'react-native';
+import React from "react";
+import { Image, View, StatusBar} from 'react-native';
 import { useRecoilState } from "recoil";
 import Favorites from "../screens/Favorites";
 import Login from "../screens/Login";
 import Movies from "../screens/Movies";
 import { brightnessMode } from "../states/brightnessMode";
 import { refreshed } from "../states/refreshed";
-import { IMovieType, RootStackParamList } from "../types/types";
+import { RootStackParamList } from "../types/types";
 import { wHeight, wWidth } from "../utils/Utils";
 
 // display movies on homepage
@@ -24,7 +24,7 @@ const Navigation = () => {
               :
             <StatusBar barStyle={"dark-content"} backgroundColor={mode.navbarBackgroundColor}/>
           }
-          <NavigationContainer>
+          <NavigationContainer >
           <Tab.Navigator 
             screenOptions={{
               tabBarHideOnKeyboard: true,

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Switch, StyleSheet } from "react-native";
+import { View, Text, Switch } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";

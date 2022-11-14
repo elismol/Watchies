@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { IMovieType } from "../types/types";
-import { Button, StatusBar, Text, Image, TextInput, TouchableOpacity, View, Modal, Linking, StyleSheet } from 'react-native';
-import { addLike, getUser, removeLike } from "../api/movieAPI";
+import { Text, Image, TouchableOpacity, View, Linking, StyleSheet } from 'react-native';
+import { addLike, removeLike } from "../api/movieAPI";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { wHeight, wWidth } from "../utils/Utils";
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
 import { modalMovie } from "../states/modalMovie";
 import { favouriteMoviesList } from "../states/favouriteMoviesList";
-import Favorites from "../screens/Favorites";
 
 // pop up with more information about a movie
 const MovieInfo = () => {
@@ -24,7 +22,6 @@ const MovieInfo = () => {
 
     useEffect(()=> {
         setPoster({uri : modal.movie.posterlink});
-        console.log("modalOpened with: " + modal.movie.title);
         if (favourites.movies.some(m => m.id === modal.movie.id)) {
             setIsInFavorite(true);
         };

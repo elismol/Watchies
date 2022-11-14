@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {addUser, getUser} from '../api/movieAPI';
-import { Modal, Text , TouchableOpacity, View, StyleSheet, Image } from 'react-native';
+import { Modal, Text , View, Image } from 'react-native';
 import { TextInput, Button } from "react-native-paper";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -34,6 +34,7 @@ const Login = ({navigation}: LoginProps) => {
   const [showAccountState, setShowAccountState] = useRecoilState(showAccount);
   const [modal, setModal] = useRecoilState(modalMovie);
   const [favourites, setFavourites] = useRecoilState(favouriteMoviesList);
+  const [active, setActive] = useState(true);
 
   // clear error messages when typing into textinputs
   useEffect (() => {
@@ -49,6 +50,7 @@ const Login = ({navigation}: LoginProps) => {
     setRefresh({hasRefreshed: false, refresh: true});
     setOpen(false);
     AsyncStorage.setItem("active", "false");
+    setActive(false);
     setFavourites({movies: new Array<IMovieType>()})
   };
   
@@ -65,12 +67,13 @@ const Login = ({navigation}: LoginProps) => {
 
   // modal pop up if user wants to log out or not
   const isActive = async () => {
-      const active = await AsyncStorage.getItem("active");
-      if(refresh.hasRefreshed && active === "true") { //if refreshed app while still logged in
+      const activeValue = await AsyncStorage.getItem("active");
+      setActive(activeValue === "true");
+      if(refresh.hasRefreshed && activeValue === "true") { //if refreshed app while still logged in
         setRefresh({hasRefreshed: true, refresh: true});
         navigation.navigate("Movies");
       }
-      else if(active === "true") {
+      else if(activeValue === "true") {
         setOpen(true);
       } 
       else {
@@ -160,11 +163,12 @@ const Login = ({navigation}: LoginProps) => {
     }
   }
 
+  // note: every view that is wrapping a whole page needs flex: 1 or else it will flash white when chaning page
     return (
-      <SafeAreaView style={{backgroundColor: mode.backgroundColor}}>
+      <SafeAreaView style={{backgroundColor: mode.backgroundColor, flex: 1}}>
         <View>
           <Modal
-            animationType="none"
+            animationType="fade"
             visible={open}
             transparent={false}
           >
@@ -180,7 +184,7 @@ const Login = ({navigation}: LoginProps) => {
           </Modal>
         </View>
         
-        {(refresh.refresh) ?
+        {(refresh.refresh && !active) ?
         <View style={{display: "flex", height: "100%", width: "100%"}}>
           <View style={{display: "flex", flex:4, justifyContent: "flex-end", alignItems: "center", flexDirection: "column"}}>   
             <Image source={require("../resources/watchiesLogo.png")} resizeMode="contain" style={{height: "40%", width: "60%"}}/>

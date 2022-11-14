@@ -1,13 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, TouchableOpacity, View } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
-import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
-import TextInputIcon from "react-native-paper/lib/typescript/components/TextInput/Adornment/TextInputIcon";
+import { Image, TouchableOpacity, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
 import { showAccount } from "../states/showAccount";
-import { wHeight, wWidth } from "../utils/Utils";
+import { wHeight } from "../utils/Utils";
 
 // shows the users email in the top right corner
 const AccountInfo = () => {

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Text, Image, TouchableOpacity, View, Modal, StyleSheet } from 'react-native';
+import React, { useEffect } from "react";
+import { Text, TouchableOpacity, View, Modal, StyleSheet } from 'react-native';
 import { wHeight, wWidth } from "../utils/Utils";
 import { useRecoilState } from "recoil";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { initialMovieState, modalMovie } from '../states/modalMovie';
+import { modalMovie } from '../states/modalMovie';
 import MovieInfo from "./MovieInfo";
 import { brightnessMode } from "../states/brightnessMode";
 
@@ -19,7 +19,6 @@ const ModalMovieInfo = () => {
         if(modal.openModal) {
             setModal({movie: modal.movie, openModal: true});
         }
-        console.log("modalmovie chaned");
     },[modal.openModal])
 
     const handleClose = () => {

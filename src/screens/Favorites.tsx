@@ -3,7 +3,6 @@ import { ActivityIndicator, StyleSheet, Modal, Pressable, ScrollView, Text, Touc
 import { getMovie, getUser } from '../api/movieAPI';
 import { IMovieType } from '../types/types';
 import Movie from '../components/Movie';
-import MovieInfo from '../components/MovieInfo';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,17 +11,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../types/types';
-import AccountInfo from '../components/AccountInfo';
 import { useRecoilState } from 'recoil';
 import { refreshed } from '../states/refreshed';
-import ColorModeButton from '../components/ColorModeButton';
 import { brightnessMode } from '../states/brightnessMode';
 import Header from '../components/Header';
-import { wHeight, wWidth } from '../utils/Utils';
-import { TextInput } from 'react-native-paper';
+import { wHeight } from '../utils/Utils';
 import { movieStyles } from '../themes/movieStyles';
-import ModalMovieInfo from '../components/ModalMovieInfo';
-import { initialMovieState, modalMovie } from '../states/modalMovie';
 import { favouriteMoviesList } from '../states/favouriteMoviesList';
 
 type FavoritesProps = NativeStackScreenProps<RootStackParamList, 'Favorites'>;

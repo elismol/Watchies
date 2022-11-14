@@ -2,7 +2,7 @@ import React from "react";
 import { View, Image } from "react-native";
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
-import { wHeight, wWidth } from "../utils/Utils";
+import { wHeight } from "../utils/Utils";
 import AccountInfo from "./AccountInfo";
 import ColorModeButton from "./ColorModeButton";
 

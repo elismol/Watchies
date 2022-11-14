@@ -3,14 +3,14 @@
     "name": "watchies",
     "slug": "watchies",
     "owner": "aelxnadre72",
+    "backgroundColor": "#000000",
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": [
         "ts",
         "tsx",
         "js",
-        "jsx",
-        "css"
+        "jsx"
       ]
     },
     "version": "1.0.0",

@@ -143,7 +143,6 @@ const Movies = ({navigation}: MoviesProps) => {
                 </Text>);
         }
         else if (!loading && list.length === 0) {
-            console.log("yueyey")
             return(
                 <View style={{                    
                     zIndex: 10,

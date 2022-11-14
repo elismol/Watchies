@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, View} from 'react-native';
 import { Text } from 'react-native-paper';
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
-import { initialMovieState, modalMovie } from "../states/modalMovie";
+import {  modalMovie } from "../states/modalMovie";
 import { movieStyles } from "../themes/movieStyles";
 import { IMovieType } from "../types/types";
 import { wWidth } from "../utils/Utils";
@@ -23,7 +23,6 @@ const Movie = (props: IMovieType) => {
     }
 
     const handleModal = () => {
-        console.log("endret");
         setModal({movie: props, openModal: true});
     }
 

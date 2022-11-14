@@ -5,7 +5,7 @@ import DropDownPicker, { ThemeNameType } from 'react-native-dropdown-picker';
 import { TextInput } from "react-native-paper";
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
-import { wHeight, wWidth } from "../utils/Utils";
+import { wHeight } from "../utils/Utils";
 
 // dropdown for sorting by year
 const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSort: (arg0: string) => void; onSearchChange: (arg0: string) => void; searchValue: string }) => {
