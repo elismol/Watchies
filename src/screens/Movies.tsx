@@ -163,9 +163,8 @@ const Movies = ({navigation}: MoviesProps) => {
         else {
             return (
                 <View style={{
-                    paddingVertical: 20,
-                    borderTopWidth: 1,
-                    borderColor: "#CED0CE",
+                    flex: 1,
+                    paddingVertical: wHeight(2),
                 }}>
                     <ActivityIndicator animating size="large"/>
                 </View>
