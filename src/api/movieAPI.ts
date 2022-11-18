@@ -1,13 +1,9 @@
-// IMPORTANT!!!
-// Change the IPv4Adress to your computers IPv4
-// Mac: https://www.wikihow.com/Find-Your-IP-Address-on-a-Mac
-// Windows: https://www.businessinsider.com/guides/tech/how-to-find-ip-address-on-windows?r=US&IR=T
-const IPv4Adress = "it2810-58.idi.ntnu.no";
+const IPv4Adress = "it2810-58s.idi.ntnu.no"; //proxy to backend from project 3.
 
-const port = "8080";
+const port = ""; //port number is not needed when using the proxy
 
 export async function getMovies(offset: Number, limit: Number, filterWord: string, searchWord: String, orderBy: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', { //http://it2810-58.idi.ntnu.no:8080/graphql
+    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', { //old url: http://it2810-58.idi.ntnu.no:8080/graphql
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
