@@ -246,13 +246,13 @@ const Login = ({navigation}: LoginProps) => {
 
             <View style={{display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: mode.errorMessageColor, marginHorizontal: wWidth(22), borderRadius: 4}}>
               {errorMessageMail ? 
-                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Mail already taken</Text> 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>E-mail already taken</Text> 
                   : 
                 <></>
               }
 
               {!errorMessage ?
-                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Wrong username or password</Text> 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Wrong e-mail or password</Text> 
                   : 
                 <></>
               }
