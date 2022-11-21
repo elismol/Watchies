@@ -5,7 +5,7 @@ import DropDownPicker, { ThemeNameType } from 'react-native-dropdown-picker';
 import { TextInput } from "react-native-paper";
 import { useRecoilState } from "recoil";
 import { brightnessMode } from "../states/brightnessMode";
-import { wHeight } from "../utils/Utils";
+import { wHeight, wWidth } from "../utils/Utils";
 
 // dropdown for sorting by year
 const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onChangeSort: (arg0: string) => void; onSearchChange: (arg0: string) => void; searchValue: string }) => {
@@ -77,8 +77,9 @@ const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onCha
     })
 
     return (
+        <>
         <View style={{display: "flex", flex: 1}}>
-            <View  style={{flex: 7.5, display: "flex"}}>
+            <View  style={{flex: 8, display: "flex"}}>
                 <TextInput
                     style={{
                         flex: 1, 
@@ -102,11 +103,12 @@ const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onCha
                 />
             </View>
 
-            <View  style={{flex: 8, display: "flex"}}>
+            <View style={{flex: 6, display: "flex"}}>
                 <View style={{display: "flex", flexDirection: "row"}}>
                     <View style={{flex: 1}}>
                         <DropDownPicker
                             style={{
+                                position: "absolute",
                                 backgroundColor: mode.dropDownBackgroundColor, 
                                 borderTopRightRadius: 0, 
                                 borderTopLeftRadius: 0, 
@@ -114,6 +116,13 @@ const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onCha
                                 borderRightWidth: wHeight(0.25),
                                 borderRadius: 0,
                                 borderColor: mode.navbarBackgroundColor
+                            }}
+                            dropDownContainerStyle={{
+                                backgroundColor: mode.dropDownBackgroundColor, 
+                                borderColor: mode.navbarBackgroundColor, 
+                                borderWidth: wHeight(0.5),
+                                borderRightWidth: wHeight(0.25),
+                                borderBottomWidth: wHeight(0.25),
                             }}
                             theme={theme}
                             open={openFilter}
@@ -129,6 +138,7 @@ const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onCha
                     <View style={{flex: 1}}>
                         <DropDownPicker
                             style={{
+                                position: "absolute",
                                 backgroundColor: mode.dropDownBackgroundColor, 
                                 borderTopRightRadius: 0, 
                                 borderTopLeftRadius: 0, 
@@ -136,6 +146,13 @@ const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onCha
                                 borderLeftWidth: wHeight(0.25),
                                 borderRadius: 0,
                                 borderColor: mode.navbarBackgroundColor
+                            }}
+                            dropDownContainerStyle={{
+                                backgroundColor: mode.dropDownBackgroundColor, 
+                                borderColor: mode.navbarBackgroundColor, 
+                                borderWidth: wHeight(0.5),
+                                borderLeftWidth: wHeight(0.25),
+                                borderBottomWidth: wHeight(0.25),
                             }}
                             theme={theme}
                             open={openSort}
@@ -150,6 +167,20 @@ const SearchFilterSort = (props: { onChangeFilter: (arg0: string) => void; onCha
                 </View>
             </View>
         </View>
+
+        <View style={{ // backgorundColor did not work with the scrollVew in the dropdownpicker, neither did z-index.
+            height: wHeight(15.5), // had to place an empty view behind the dropdownpickers so it the background would not be transparent when pressing on the picker.
+            display: "flex", 
+            position: "absolute", 
+            marginTop: wHeight(0), 
+            backgroundColor: mode.navbarBackgroundColor}}>                   
+            <View style={{
+                flex: 1, 
+                display: "flex", 
+                width: wWidth(100)}}>
+            </View>
+        </View>
+        </>
     )
 }
 

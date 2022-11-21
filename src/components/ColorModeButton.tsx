@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { View, Text, Switch } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,10 +12,14 @@ const ColorModeButton = () => {
   const [mode, setMode] = useRecoilState(brightnessMode);
 
   const handleClick = () => {
-    (mode.backgroundColor === darkMode.backgroundColor) ? 
-      setMode(lightMode) 
-        : 
+    if (mode.backgroundColor === darkMode.backgroundColor) {
+      setMode(lightMode);
+      AsyncStorage.setItem("mode", "lightMode");
+    }
+    else {
       setMode(darkMode);
+      AsyncStorage.setItem("mode", "darkMode");
+    }
   }
     
   return(

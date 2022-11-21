@@ -26,6 +26,7 @@ const Navigation = () => {
           }
           <NavigationContainer >
           <Tab.Navigator 
+            backBehavior="none"
             screenOptions={{
               tabBarHideOnKeyboard: true,
               headerShown: false,
@@ -59,7 +60,8 @@ const Navigation = () => {
             />
             <Tab.Screen 
               options={{
-                unmountOnBlur: false, 
+                unmountOnBlur: false,
+
                 tabBarIcon: () => {
                   return (
                     <View>

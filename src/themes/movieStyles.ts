@@ -4,7 +4,7 @@ import { wHeight, wWidth } from "../utils/Utils";
 export const movieStyles = StyleSheet.create({
     cardContainer: {
         display: "flex",
-        zIndex: 0,
+        zIndex: -2,
         color: "white",
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,

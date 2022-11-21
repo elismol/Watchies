@@ -208,9 +208,9 @@ const Movies = ({navigation}: MoviesProps) => {
         <>
         <SafeAreaView style={{display: "flex", flex: 1, flexDirection: "column", backgroundColor: mode.backgroundColor}}>
             <Header></Header>
-            
-            <View style={{height: wHeight(15.5), display: "flex", position: "absolute", marginTop: wHeight(10)}}>                   
-                    <View style={{flex: 1, display: showSearchBar, width: wWidth(100)}}>
+
+            <View style={{height: wHeight(15), display: "flex", position: "absolute", marginTop: wHeight(10)}}>                   
+                    <View style={{flex: 1, display: showSearchBar, width: wWidth(100), margin: 0, padding: 0}}>
                         <SearchFilterSort 
                             onChangeSort={onChangeSort} 
                             onChangeFilter={onChangeFilter} 
@@ -218,9 +218,10 @@ const Movies = ({navigation}: MoviesProps) => {
                             searchValue={searchWord}/>
                     </View>
             </View>
-            
+                        
             <View style={{flex: 1}}>
                 <FlatList
+                    style={{zIndex: -1}}
                     ref={flatListRef}
                     contentContainerStyle={movieStyles.movieContainer}
                     numColumns={3}
@@ -231,7 +232,7 @@ const Movies = ({navigation}: MoviesProps) => {
                     initialNumToRender={200}
                     maxToRenderPerBatch={200} //stores a render of 200 at a time
                     ListFooterComponent={renderFooter}
-                    ListHeaderComponent={<Text style={{height: wHeight(15.5), color: mode.fontColor}}>You are not supposed to see this</Text>}
+                    ListHeaderComponent={<Text style={{height: wHeight(15.5), color: mode.navbarBackgroundColor}}>You are not supposed to see this</Text>}
                     onScroll={(event) => showSearch(event)}
                     renderItem={({item}) => (     
                             <Movie {...item} />

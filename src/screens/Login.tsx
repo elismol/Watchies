@@ -14,6 +14,7 @@ import { wHeight, wWidth } from '../utils/Utils';
 import { showAccount } from '../states/showAccount';
 import { initialMovieState, modalMovie } from '../states/modalMovie';
 import { favouriteMoviesList } from '../states/favouriteMoviesList';
+import { lightMode } from '../themes/themes';
 
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -56,14 +57,23 @@ const Login = ({navigation}: LoginProps) => {
   
   // if user do not want to log out
   const handleCloseNo = () => {
-    navigation.goBack();
+    navigation.navigate("Movies");
   };
   
   //check if user was active
   useEffect(() => {
     isActive();
+    getTheme();
     getEmail();
   },[]);
+
+  // set theme of app dark/light
+  const getTheme = async () => {
+    const activeMode = await AsyncStorage.getItem("mode");
+    if(activeMode === "lightMode") {
+      setMode(lightMode);
+    }
+  };
 
   // modal pop up if user wants to log out or not
   const isActive = async () => {
