@@ -10,7 +10,7 @@ yarn --version
 ```bash
 npm install --global yarn
 ```
-3. Repeat step 1 to verify that yarn was successfully isntalled.
+3. Repeat step 1 to verify that yarn was successfully installed.
 
 4. Install the dependencies inside /watchies:
 ```bash
