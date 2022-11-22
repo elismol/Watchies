@@ -229,8 +229,8 @@ const Movies = ({navigation}: MoviesProps) => {
                     keyExtractor={(movie: IMovieType) => movie.id}
                     onEndReached={newPage}
                     onEndReachedThreshold={0.001}
-                    initialNumToRender={200}
-                    maxToRenderPerBatch={200} //stores a render of 200 at a time
+                    initialNumToRender={150}
+                    maxToRenderPerBatch={150} //stores a render of 150 at a time
                     ListFooterComponent={renderFooter}
                     ListHeaderComponent={<Text style={{height: wHeight(15.5), color: mode.navbarBackgroundColor}}>You are not supposed to see this</Text>}
                     onScroll={(event) => showSearch(event)}

@@ -26,9 +26,11 @@ const Login = ({navigation}: LoginProps) => {
   const [title, setTitle] = useState("Login");
   const [toggleButton, setToggleButton] = useState("Create account");
   const [showSignUp, setShowSignUp] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(false);
   const [errorMessagePassword, setErrorMessagePassword] = useState(false);
   const [errorMessageMail, setErrorMessageMail] = useState(false);
+  const [errorMessageEmpty, setErrorMessageEmpty] = useState(false);
+  const [errorMessageMailSyntax, setErrorMessageMailSyntax] = useState(false);
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useRecoilState(refreshed); //handle if refresh while still logged in (skip login page)
   const [mode, setMode] = useRecoilState(brightnessMode);
@@ -39,9 +41,11 @@ const Login = ({navigation}: LoginProps) => {
 
   // clear error messages when typing into textinputs
   useEffect (() => {
-    setErrorMessage(true);
+    setErrorMessage(false);
     setErrorMessagePassword(false);
     setErrorMessageMail(false);
+    setErrorMessageEmpty(false);
+    setErrorMessageMailSyntax(false);
   }, [email, password, confirmPassword]);
 
   // if user wants to log out
@@ -102,11 +106,12 @@ const Login = ({navigation}: LoginProps) => {
   //Cheks if user exists in database and correct email-password combination is provided.
   function checkUser() {
     return (
-    getUser(email.toLowerCase())
+    getUser(email.toLowerCase().trim())
       .then((value) => {
         if (value.length == 1 && value[0].password == password) {
           return true;
-        } else {
+        } 
+        else {
           return false;
         }
   }))}
@@ -114,7 +119,7 @@ const Login = ({navigation}: LoginProps) => {
   //Cheks if user exists in database and correct email-password combination is provided.
   function checkEmail() {
       return (
-      getUser(email.toLowerCase())
+      getUser(email.toLowerCase().trim())
         .then((value) => {
           if (value.length == 1) {
             return true;
@@ -126,42 +131,58 @@ const Login = ({navigation}: LoginProps) => {
   //handle event when signing in/creating account.
   async function handleSubmit () {
 
+    //checks if email contain "@" and "."
+    if (!email.includes("@") || !email.includes(".") || email.trim().includes(" ")) {
+      setErrorMessageMailSyntax(true);
+    }
+
+    //checks if email or password is empty
+    else if(email === "" || password === "" || (showSignUp && confirmPassword === "")) {
+      setErrorMessageEmpty(true);
+      return;
+    }
+
     //Checks if the user is signing in or creating an account.
-    if (showSignUp) {
+    else if (showSignUp) {
       //Checks if passwords matches and if the email already exists. If not, a new account is created.
       if (password == confirmPassword) {
         if (!(await checkEmail())) {
-          addUser(email.toLowerCase(), password);
-          AsyncStorage.setItem("email", email.toLowerCase());
+          addUser(email.toLowerCase().trim(), password);
+          AsyncStorage.setItem("email", email.toLowerCase().trim());
           AsyncStorage.setItem("active", "true");
           setRefresh({hasRefreshed: true, refresh: true});
           navigation.navigate('Movies');
-        } else {
+        } 
+        else {
           setErrorMessageMail(true);
-          setErrorMessagePassword(false);
         }
-      } else {
+      } 
+      else {
         setErrorMessagePassword(true);
       }
     }
+
     else { //Checks email and password against existing users.
       if (await checkUser()) {
-        AsyncStorage.setItem("email", email.toLowerCase());
+        AsyncStorage.setItem("email", email.toLowerCase().trim());
         AsyncStorage.setItem("active", "true");
-        setErrorMessage(true);
+        setErrorMessage(false);
         setRefresh({hasRefreshed: true, refresh: true});
         navigation.navigate('Movies');
-      } else {
-        setErrorMessage(false);
+      } 
+      else {
+        setErrorMessage(true);
       }
     }
   }; 
 
   //Toggles between sign in and create new account. 
   function handleSignUp() {
-    setErrorMessage(true);
+    setErrorMessage(false);
     setErrorMessagePassword(false);
     setErrorMessageMail(false);
+    setErrorMessageEmpty(false);
+    setErrorMessageMailSyntax(false);
     if (toggleButton == "Create account") {
       setTitle("Create account")
       setToggleButton("Already have an account?")
@@ -245,13 +266,25 @@ const Login = ({navigation}: LoginProps) => {
             }
 
             <View style={{display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: mode.errorMessageColor, marginHorizontal: wWidth(22), borderRadius: 4}}>
+            {errorMessageMailSyntax ? 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Invalid E-mail</Text> 
+                  : 
+                <></>
+              }
+              
+              {errorMessageEmpty ? 
+                <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>All fields are required</Text> 
+                  : 
+                <></>
+              }
+              
               {errorMessageMail ? 
                 <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>E-mail already taken</Text> 
                   : 
                 <></>
               }
 
-              {!errorMessage ?
+              {errorMessage ?
                 <Text style={{color: mode.fontColor, margin: 0, padding: 0, fontWeight: "bold", marginVertical: wHeight(0.5), fontSize: wWidth(3.5)}}>Wrong e-mail or password</Text> 
                   : 
                 <></>
