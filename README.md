@@ -38,7 +38,7 @@ Then continue through the remaining steps.
 ### APK
 If you have an android phone and would like to try out the app without the expo app, you can download the apk and install it on your phone from here:
 ```bash
-https://expo.dev/artifacts/eas/jKJ5VpnmPMtLLs9UPk921j.apk
+https://expo.dev/artifacts/eas/ojdsm2wQjWEZ56nfkvsB1H.apk
 ```
 
 
@@ -65,7 +65,7 @@ You can click on a movie to view more information as well as adding it to favori
 
 <img src="./assets/readmeImages/movieInfoLight.jpg" width="280" height="600">
 
-### Favorie Movies Page
+### Favorite Movies Page
 On this page you will be able to see all your favorite movies that were previously added.
 
 <img src="./assets/readmeImages/favoritesDark.jpg" width="280" height="600">
