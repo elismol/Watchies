@@ -36,7 +36,7 @@ expo logout
 Then continue through the remaining steps.
 
 ### APK
-If you have an android phone and would like to try out the app without th expo app, you can download the apk and install it on your phone from here:
+If you have an android phone and would like to try out the app without the expo app, you can download the apk and install it on your phone from here:
 ```bash
 https://expo.dev/artifacts/eas/jKJ5VpnmPMtLLs9UPk921j.apk
 ```
@@ -47,27 +47,32 @@ Watchies is a React Native application. The main functionality of the applicatio
 
 ### Login Page
 When you open the application you will be directed to the initial page, the login page. Here you can enter your email and password to sign in, or create a new account. The form handles various errors and gives feedback to the user. If you were previously logged in without logging out, then you will be directed directly into movies, skipping the login screen. The last theme (dark/light) setting will also be saved.
-<img src="./assets/readmeImages/loginDark.jpg" width="400" height="auto">
-<img src="./assets/readmeImages/loginLight.jpg" width="400" height="auto">
+
+<img src="./assets/readmeImages/loginDark.jpg" width="auto" height="700">
+<img src="./assets/readmeImages/loginLight.jpg" width="auto" height="700">
 
 ### Movie Search Page
-After signing in you will be directed to the page for movie search. Here you are able to search, filter and sort. The header containing the search bar and drop-downs will dissappear when scrolling downwards and appear when scrolling upwards or when you are at the top. It is not possible to make the header dissappear when the view is above the first row of movie components.
-<img src="./assets/readmeImages/moviesDark.jpg" width="400" height="auto">
-<img src="./assets/readmeImages/moveisLight.jpg" width="400" height="auto">
+After signing in you will be directed to the movie search page. Here you are able to search, filter and sort. The header containing the search bar and drop-downs will dissappear when scrolling downwards and appear when scrolling upwards or when you are at the top. It is not possible to make the header dissappear when the view is above the first row of movie components.
+
+<img src="./assets/readmeImages/moviesDark.jpg" width="auto" height="700">
+<img src="./assets/readmeImages/moviesLight.jpg" width="auto" height="700">
 
 You can click on a movie to view more information as well as adding it to favorites. There is also a button directing you to the IMDB page.
-<img src="./assets/readmeImages/movieInfoDark.jpg" width="400" height="auto">
-<img src="./assets/readmeImages/movieInfoLight.jpg" width="400" height="auto">
+
+<img src="./assets/readmeImages/movieInfoDark.jpg" width="auto" height="700">
+<img src="./assets/readmeImages/movieInfoLight.jpg" width="auto" height="700">
 
 ### Favorie Movies Page
-On this page you will be able to see all your favorite movies that were previosly added.
-<img src="./assets/readmeImages/favoritesDark.jpg" width="400" height="auto">
-<img src="./assets/readmeImages/favoritesLight.jpg" width="400" height="auto">
+On this page you will be able to see all your favorite movies that were previously added.
+
+<img src="./assets/readmeImages/favoritesDark.jpg" width="auto" height="700">
+<img src="./assets/readmeImages/favoritesLight.jpg" width="auto" height="700">
 
 ### Log out
 When pressing the log out tab in the navbar you will get a pop up to confirm if you would like to log out or not.
-<img src="./assets/readmeImages/logOutDark.jpg" width="400" height="auto">
-<img src="./assets/readmeImages/logOutLight.jpg" width="400" height="auto">
+
+<img src="./assets/readmeImages/logOutDark.jpg" width="auto" height="700">
+<img src="./assets/readmeImages/logOutLight.jpg" width="auto" height="700">
 
 ### Dark/Light Mode
 On all the pages there is a switch available where you can change the mode between dark and light. Default is dark, but after running the app for the first time, your settings wil be saved.
