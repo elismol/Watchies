@@ -106,9 +106,10 @@ On all the pages there is a switch available where you can change the mode betwe
 
 
 ## Work process
-Throughout this project, we have practiced pair programming as a development technique. With this technique, the pair works from one computer, which is why all the commits in this project are committed by only one group member. We chose this development technique because of the valuable learning outcome for both parties. 
+Throughout this project, we have practiced pair programming as a development technique. With this technique, the pair works from one computer, which is why all the commits in this project are committed by only one group member. We chose this development technique because of the valuable learning outcome for both parties. We did not push to git as often as we are used to because we were always working together on the same computer.
 
-We also viewed it as unnecessary to have issues for each component as most of them were already developed in Project 3. They only needed partly rewriting, improvements or minor fixes to work in React Native. 
+### Git
+We decided to not have issues and branches for each component as most of them were already developed in Project 3, and the work that needed to be done involved changing multiple components as a whole, and therefore unnecessary to have issues and branches for individual components. Most of the components needed partly rewriting, improvements or minor fixes to work in React Native. 
 
 ## Testing
 The application was tested with the expo app on android. It was tested with two devices with different aspect ratios:
