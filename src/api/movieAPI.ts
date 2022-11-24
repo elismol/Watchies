@@ -1,9 +1,9 @@
 const IPv4Adress = "it2810-58s.idi.ntnu.no"; //proxy to backend from project 3.
 
-const port = ""; //port number is not needed when using the proxy
+const port = ":" + ""; //port number is not needed when using the proxy
 
 export async function getMovies(offset: Number, limit: Number, filterWord: string, searchWord: String, orderBy: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', { //old url: http://it2810-58.idi.ntnu.no:8080/graphql
+    return fetch('http://' + IPv4Adress + '/graphql', { //old url: http://it2810-58.idi.ntnu.no:8080/graphql
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export async function getMovies(offset: Number, limit: Number, filterWord: strin
   })*/
 
 export async function getMovie(movieId: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', {
+    return fetch('http://' + IPv4Adress + '/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export async function getMovie(movieId: string) {
 }
 
 export async function addLike (userId: string, movieId: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', {
+    return fetch('http://' + IPv4Adress + '/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ export async function addLike (userId: string, movieId: string) {
 }
 
 export async function removeLike (userId: string, movieId: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', {
+    return fetch('http://' + IPv4Adress + '/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export async function removeLike (userId: string, movieId: string) {
 }
 
 export async function getUser (userId: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', {
+    return fetch('http://' + IPv4Adress + '/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -155,7 +155,7 @@ export async function getUser (userId: string) {
 }
 
 export async function addUser (userId: string, password: string) {
-    return fetch('http://' + IPv4Adress + ':' + port +'/graphql', {
+    return fetch('http://' + IPv4Adress + '/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
