@@ -1,5 +1,40 @@
 # Watchies
 
+## NB: the application was created to work optimally with android devices
+The application was only tested with different android devices. There are differences between Android and iOS regarding the functionality of react native core components (one of our reviewers experienced feedback from the Pressable-component on iOS when we do not include the "pressed" attribute in the styling of the component, and the modal pop up did not work on their favorites page) and the order of the stacking of components when running the project (some components was incorrectly positioned in front of others, which we never experienced when testing on three different android devices). 
+Therefore, the application has ciritcal bugs when ran with iOS. We only had Windows computers available so we could not use the iOS simulator in Xcode. However, we could have used a third-party simulator (for instance BlueStacks) to test it with iOS, but it was not a criteria in this project and therefore considered out of scope.
+
+We would recommend that you try out the application with an Android device or an Android simulator to experience the intended bugless behvaiour of the app that we strived to achieve.
+
+### DEMO: If you do not have access to an Android device or Android simulator
+We have provided a video demo of the application that showcases all of the availabe funcitonality the way we experienced it on our Android devices.
+
+```bash
+https://veed.io/view/d6b55733-b3a7-4bcf-b1cd-e9f740e336aa
+```
+
+#### Functionality showcased in the demo:
+- Different feedback when signing in and signing up (the email field will also check if "@" and "." is present).
+- Creating a user.
+- Scrolling in the infinite list.
+- Pressing on a movie on the homepage.
+- Adding a movie to your favorites list.
+- Searching for a movie.
+- Feedback when reaching the end of the infinite list.
+- Feedback when there is no movies matching the search.
+- Filter on genre.
+- Sorting on newest first or oldest first.
+- Sorting, filter and search dissapears on scroll down and appears on scroll up.
+- Users email displayed/hidden at the top right corner.
+- Dark mode/light mode.
+- View movies added to your favorites list on the favorites page.
+- Pressing on a movie on the favorite page.
+- Skips login page when previously logged in after completely closing the app.
+- Saves the previous dark/light mode settings after completely closing the app.
+- Signing out with the Sign out button, confirm the sign out and then get directed to login page instead of homepage when reopening the app.
+- Remove a movie from the favorites list on the favorites page.
+- Persistent favorites list after signing out and in.
+
 ## Run Instructions
 1. Check if you have yarn installed:
 ```bash
